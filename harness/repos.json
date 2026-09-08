@@ -1,0 +1,37 @@
+{
+ "_comment": [
+  "多仓库查表。key = 实例 json 的 repo 字段（swesmith/<owner>__<repo>.<commit8>），",
+  "别名（短名 / 不带 org 的仓名）也能查到，见 harness/repo_config.py。",
+  "镜像仓命名规律：SWE-smith/swesmith/profiles/base.py:207 repo_name = <owner>__<repo>.<commit[:8]>"
+ ],
+ "repos": {
+  "swesmith/Instagram__MonkeyType.70c3acf6": {
+   "key": "monkeytype",
+   "aliases": ["monkeytype", "Instagram__MonkeyType.70c3acf6"],
+   "mirror_url": "https://github.com/swesmith/Instagram__MonkeyType.70c3acf6",
+   "clean_repo": "${SWESMITH_LAB}/repos/clean-monkeytype",
+   "venv": "${SWESMITH_LAB}/venv-monkeytype",
+   "python": "3.11",
+   "pip_install": ["libcst>=0.4.4", "mypy_extensions", "pytest==7.4.4", "tiktoken"],
+   "test_cmd": "python -m pytest --disable-warnings --color=no --tb=short -q -p no:cacheprovider",
+   "code_prefixes": ["monkeytype"],
+   "protected_prefixes": ["tests", "demo"],
+   "config_files": ["conftest.py", "pytest.ini", "setup.cfg", "tox.ini", "pyproject.toml"],
+   "baseline_summary": "379 passed, 2 skipped, 1 xpassed"
+  },
+  "swesmith/vi3k6i5__flashtext.b316c7e9": {
+   "key": "flashtext",
+   "aliases": ["flashtext", "vi3k6i5__flashtext.b316c7e9"],
+   "mirror_url": "https://github.com/swesmith/vi3k6i5__flashtext.b316c7e9",
+   "clean_repo": "${SWESMITH_LAB}/repos/clean-flashtext",
+   "venv": "${SWESMITH_LAB}/venv-flashtext",
+   "python": "3.11",
+   "pip_install": ["pytest==7.4.4"],
+   "test_cmd": "python -m pytest --disable-warnings --color=no --tb=short -q -p no:cacheprovider",
+   "code_prefixes": ["flashtext"],
+   "protected_prefixes": ["test"],
+   "config_files": ["conftest.py", "pytest.ini", "setup.cfg", "tox.ini", "pyproject.toml"],
+   "baseline_summary": "39 passed"
+  }
+ }
+}

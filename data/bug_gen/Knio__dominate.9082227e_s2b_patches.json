@@ -1,0 +1,62 @@
+[
+  {
+    "cost": 0.0,
+    "explanation": "The operations in an expression are likely incorrect.",
+    "output": "",
+    "rewrite": "def __repr__(self):\n    name = '%s.%s' * (self.__module__, type(self).__name__)\n\n    attributes_len = len(self.attributes)\n    attributes = '%s attribute' % attributes_len\n    if attributes_len != 1: attributes += 's'\n\n    children_len = len(self.children)\n    children = '%s child' % children_len\n    if children_len != 1: children += 'ren'\n\n    return '<%s at %x: %s, %s>' % (name, id(self), attributes, children)",
+    "strategy": "func_pm_op_change",
+    "instance_id": "Knio__dominate.9082227e.func_pm_op_change__4hx8i6a3",
+    "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -407,8 +407,8 @@\n     return inline\n \n \n-  def __repr__(self):\n-    name = '%s.%s' % (self.__module__, type(self).__name__)\n+def __repr__(self):\n+    name = '%s.%s' * (self.__module__, type(self).__name__)\n \n     attributes_len = len(self.attributes)\n     attributes = '%s attribute' % attributes_len\n",
+    "repo": "Knio__dominate.9082227e"
+  },
+  {
+    "cost": 0.0,
+    "explanation": "The base class has been removed from the class definition.",
+    "output": "",
+    "rewrite": "class comment():\n  '''\n  Normal, one-line comment:\n    >>> print comment(\"Hello, comments!\")\n    <!--Hello, comments!-->\n\n  For IE's \"if\" statement comments:\n    >>> print comment(p(\"Upgrade your browser.\"), condition='lt IE6')\n    <!--[if lt IE6]><p>Upgrade your browser.</p><![endif]-->\n\n  Downlevel conditional comments:\n    >>> print comment(p(\"You are using a \", em(\"downlevel\"), \" browser.\"),\n            condition='false', downlevel='revealed')\n    <![if false]><p>You are using a <em>downlevel</em> browser.</p><![endif]>\n\n  For more on conditional comments see:\n    http://msdn.microsoft.com/en-us/library/ms537512(VS.85).aspx\n  '''\n\n  ATTRIBUTE_CONDITION = 'condition'\n\n  # Valid values are 'hidden', 'downlevel' or 'revealed'\n  ATTRIBUTE_DOWNLEVEL = 'downlevel'\n\n  def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n    has_condition = comment.ATTRIBUTE_CONDITION in self.attributes\n    is_revealed   = comment.ATTRIBUTE_DOWNLEVEL in self.attributes and \\\n        self.attributes[comment.ATTRIBUTE_DOWNLEVEL] == 'revealed'\n\n    sb.append('<!')\n    if not is_revealed:\n      sb.append('--')\n    if has_condition:\n      sb.append('[if %s]>' % self.attributes[comment.ATTRIBUTE_CONDITION])\n\n    pretty = self._render_children(sb, indent_level - 1, indent_str, pretty, xhtml)\n\n    # if len(self.children) > 1:\n    if any(isinstance(child, dom_tag) for child in self):\n      sb.append('\\n')\n      sb.append(indent_str * (indent_level - 1))\n\n    if has_condition:\n      sb.append('<![endif]')\n    if not is_revealed:\n      sb.append('--')\n    sb.append('>')\n\n    return sb",
+    "strategy": "func_pm_class_rm_base",
+    "instance_id": "Knio__dominate.9082227e.func_pm_class_rm_base__s21ry2ub",
+    "patch": "--- a/dominate/tags.py\n+++ b/dominate/tags.py\n@@ -1081,7 +1081,7 @@\n \n \n # Additional markup\n-class comment(html_tag):\n+class comment():\n   '''\n   Normal, one-line comment:\n     >>> print comment(\"Hello, comments!\")\n",
+    "repo": "Knio__dominate.9082227e"
+  },
+  {
+    "cost": 0.0,
+    "explanation": "The operands in an expression are likely in the wrong order.",
+    "output": "",
+    "rewrite": "def __getitem__(self, key):\n    '''\n    Returns the stored value of the specified attribute or child\n    (if it exists).\n    '''\n    if isinstance(key, int):\n      # Children are accessed using integers\n      try:\n        return object.__getattribute__(self, 'children')[key]\n      except IndexError:\n        raise IndexError('Child with index \"%s\" does not exist.' % key)\n    elif isinstance(key, basestring):\n      # Attributes are accessed using strings\n      try:\n        return object.__getattribute__(self, 'attributes')[key]\n      except KeyError:\n        raise AttributeError(key % 'Attribute \"%s\" does not exist.')\n    else:\n      raise TypeError('Only integer and string types are valid for accessing '\n          'child tags and attributes, respectively.')",
+    "strategy": "func_pm_op_swap",
+    "instance_id": "Knio__dominate.9082227e.func_pm_op_swap__crswunwl",
+    "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -284,7 +284,7 @@\n     return results\n \n \n-  def __getitem__(self, key):\n+def __getitem__(self, key):\n     '''\n     Returns the stored value of the specified attribute or child\n     (if it exists).\n@@ -300,7 +300,7 @@\n       try:\n         return object.__getattribute__(self, 'attributes')[key]\n       except KeyError:\n-        raise AttributeError('Attribute \"%s\" does not exist.' % key)\n+        raise AttributeError(key % 'Attribute \"%s\" does not exist.')\n     else:\n       raise TypeError('Only integer and string types are valid for accessing '\n           'child tags and attributes, respectively.')\n",
+    "repo": "Knio__dominate.9082227e"
+  },
+  {
+    "cost": 0.0,
+    "explanation": "There is likely a missing assignment in the code.",
+    "output": "",
+    "rewrite": "def add(self, *args):\n    '''\n    Add new child tags.\n    '''\n    for obj in args:\n      if isinstance(obj, numbers.Number):\n        # Convert to string so we fall into next if block\n        obj = str(obj)\n\n      if isinstance(obj, basestring):\n        obj = util.escape(obj)\n        self.children.append(obj)\n\n      elif isinstance(obj, dom_tag):\n        for s in stack:\n          s.used.add(obj)\n        self.children.append(obj)\n        obj.parent = self\n\n      elif isinstance(obj, dict):\n        for attr, value in obj.items():\n          self.set_attribute(*dom_tag.clean_pair(attr, value))\n\n      elif hasattr(obj, '__iter__'):\n        for subobj in obj:\n          self.add(subobj)\n\n      else:  # wtf is it?\n        raise ValueError('%r not a tag or string.' % obj)\n\n    if len(args) == 1:\n      return args[0]\n\n    return args",
+    "strategy": "func_pm_remove_assign",
+    "instance_id": "Knio__dominate.9082227e.func_pm_remove_assign__k7oo552y",
+    "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -205,7 +205,7 @@\n   __delitem__ = delete_attribute\n \n \n-  def add(self, *args):\n+def add(self, *args):\n     '''\n     Add new child tags.\n     '''\n@@ -219,7 +219,6 @@\n         self.children.append(obj)\n \n       elif isinstance(obj, dom_tag):\n-        stack = dom_tag._with_contexts.get(_get_thread_context(), [])\n         for s in stack:\n           s.used.add(obj)\n         self.children.append(obj)\n",
+    "repo": "Knio__dominate.9082227e"
+  },
+  {
+    "cost": 0.0,
+    "explanation": "There is one or more missing conditionals that causes the bug.",
+    "output": "",
+    "rewrite": "def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n    inline = True\n    for child in self.children:\n      pass\n\n    return inline",
+    "strategy": "func_pm_remove_cond",
+    "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__ojsncdpa",
+    "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -392,17 +392,10 @@\n \n     return sb\n \n-  def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n+def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n     inline = True\n     for child in self.children:\n-      if isinstance(child, dom_tag):\n-        if pretty and not child.is_inline:\n-          inline = False\n-          sb.append('\\n')\n-          sb.append(indent_str * indent_level)\n-        child._render(sb, indent_level, indent_str, pretty, xhtml)\n-      else:\n-        sb.append(unicode(child))\n+      pass\n \n     return inline\n \n",
+    "repo": "Knio__dominate.9082227e"
+  },
+  {
+    "cost": 0.0,
+    "explanation": "There is one or more missing conditionals that causes the bug.",
+    "output": "",
+    "rewrite": "def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n    has_condition = comment.ATTRIBUTE_CONDITION in self.attributes\n    is_revealed   = comment.ATTRIBUTE_DOWNLEVEL in self.attributes and \\\n        self.attributes[comment.ATTRIBUTE_DOWNLEVEL] == 'revealed'\n\n    sb.append('<!')\n    if not is_revealed:\n      sb.append('--')\n\n    pretty = self._render_children(sb, indent_level - 1, indent_str, pretty, xhtml)\n\n    # if len(self.children) > 1:\n    if any(isinstance(child, dom_tag) for child in self):\n      sb.append('\\n')\n      sb.append(indent_str * (indent_level - 1))\n\n    if has_condition:\n      sb.append('<![endif]')\n    if not is_revealed:\n      sb.append('--')\n    sb.append('>')\n\n    return sb",
+    "strategy": "func_pm_remove_cond",
+    "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__oyilorqo",
+    "patch": "--- a/dominate/tags.py\n+++ b/dominate/tags.py\n@@ -1105,7 +1105,7 @@\n   # Valid values are 'hidden', 'downlevel' or 'revealed'\n   ATTRIBUTE_DOWNLEVEL = 'downlevel'\n \n-  def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n+def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n     has_condition = comment.ATTRIBUTE_CONDITION in self.attributes\n     is_revealed   = comment.ATTRIBUTE_DOWNLEVEL in self.attributes and \\\n         self.attributes[comment.ATTRIBUTE_DOWNLEVEL] == 'revealed'\n@@ -1113,8 +1113,6 @@\n     sb.append('<!')\n     if not is_revealed:\n       sb.append('--')\n-    if has_condition:\n-      sb.append('[if %s]>' % self.attributes[comment.ATTRIBUTE_CONDITION])\n \n     pretty = self._render_children(sb, indent_level - 1, indent_str, pretty, xhtml)\n \n",
+    "repo": "Knio__dominate.9082227e"
+  }
+]

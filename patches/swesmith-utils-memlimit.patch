@@ -1,0 +1,15 @@
+diff --git a/swesmith/harness/utils.py b/swesmith/harness/utils.py
+index 1c77c43..26622f7 100644
+--- a/swesmith/harness/utils.py
++++ b/swesmith/harness/utils.py
+@@ -148,7 +148,9 @@ def run_patch_in_container(
+             detach=True,
+             command="tail -f /dev/null",
+             platform="linux/x86_64",
+-            mem_limit="10g",
++            mem_limit="600m",        # 规划方 0908: 原 10g，VPS 仅 2GB；容器超限即被 cgroup OOM 杀，不拖垮宿主
++            memswap_limit="600m",    # 禁止容器用 swap
++            pids_limit=256,
+         )
+         container.start()
+ 

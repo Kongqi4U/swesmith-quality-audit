@@ -1,0 +1,13 @@
+{
+ "source": "~/.claude/projects/<proj>/<session-id>/subagents/agent-<id>.jsonl",
+ "tokenizer": "tiktoken:cl100k_base (⚠️ 非 Qwen 分词器，量级参考)",
+ "n_messages": 23,
+ "n_assistant_turns": 11,
+ "system_tokens": 853,
+ "user_tokens": 4095,
+ "assistant_tokens": 1077,
+ "thinking_tokens": 0,
+ "total_tokens_excl_thinking": 6025,
+ "loss_token_ratio": 0.1788,
+ "ratio_if_thinking_counted": 0.1788
+}

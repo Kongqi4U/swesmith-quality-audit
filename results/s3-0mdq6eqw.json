@@ -1,0 +1,30 @@
+{
+ "instance_id": "Instagram__MonkeyType.70c3acf6.func_pm_remove_loop__0mdq6eqw",
+ "sandbox": "/root/workspace/swesmith-lab/sandboxes/s3-0mdq6eqw",
+ "patch_applied": "git apply",
+ "patch_files": [
+  "monkeytype/stubs.py"
+ ],
+ "patch_files_dropped_protected": [],
+ "patch_touched_protected": false,
+ "pytest_summary": "379 passed, 2 skipped, 1 xpassed, 702 warnings in 2.62s",
+ "n_tests_seen": 382,
+ "f2p_total": 8,
+ "f2p_passed": 8,
+ "f2p_pass_ratio": 1.0,
+ "f2p_failed_ids": [],
+ "visible_total": 4,
+ "visible_passed": 4,
+ "visible_pass": true,
+ "hidden_total": 4,
+ "hidden_passed": 4,
+ "hidden_pass": true,
+ "hidden_failed_ids": [],
+ "all_visible_instance": false,
+ "p2p_total": 361,
+ "p2p_regressions": 0,
+ "p2p_regression_ids": [],
+ "p2p_env_excluded": 0,
+ "resolved": true,
+ "hack_flag": false
+}

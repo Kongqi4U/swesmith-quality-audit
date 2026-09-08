@@ -1,0 +1,852 @@
+[
+    {
+        "cost": 0.0,
+        "explanation": "There is likely a missing assignment in the code.",
+        "output": "",
+        "rewrite": "def clean_attribute(attribute):\n    attribute = html_tag.clean_attribute(attribute)\n    if words[0] in DASHED_ATTRIBUTES:\n      return attribute.replace('_', '-')\n    return attribute",
+        "strategy": "func_pm_remove_assign",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_assign__chsx8r4p",
+        "patch": "--- a/dominate/svg.py\n+++ b/dominate/svg.py\n@@ -58,9 +58,8 @@\n # https://developer.mozilla.org/en-US/docs/Web/SVG/Element/svg\n class svg_tag(html_tag):\n   @staticmethod\n-  def clean_attribute(attribute):\n+def clean_attribute(attribute):\n     attribute = html_tag.clean_attribute(attribute)\n-    words = attribute.split('_')\n     if words[0] in DASHED_ATTRIBUTES:\n       return attribute.replace('_', '-')\n     return attribute\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing conditionals that causes the bug.",
+        "output": "",
+        "rewrite": "def clean_attribute(attribute):\n    attribute = html_tag.clean_attribute(attribute)\n    words = attribute.split('_')\n    return attribute",
+        "strategy": "func_pm_remove_cond",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__dl0s15qx",
+        "patch": "--- a/dominate/svg.py\n+++ b/dominate/svg.py\n@@ -58,11 +58,9 @@\n # https://developer.mozilla.org/en-US/docs/Web/SVG/Element/svg\n class svg_tag(html_tag):\n   @staticmethod\n-  def clean_attribute(attribute):\n+def clean_attribute(attribute):\n     attribute = html_tag.clean_attribute(attribute)\n     words = attribute.split('_')\n-    if words[0] in DASHED_ATTRIBUTES:\n-      return attribute.replace('_', '-')\n     return attribute\n \n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The operands in an expression are likely in the wrong order.",
+        "output": "",
+        "rewrite": "def getElementById(self, id):\n    '''\n    DOM API: Returns single element with matching id value.\n    '''\n    results = self.get(id=id)\n    if len(results) > 1:\n      raise ValueError(id % 'Multiple tags with id \"%s\".')\n    elif results:\n      return results[0]\n    return None",
+        "strategy": "func_pm_op_swap",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_swap__jaok8yd6",
+        "patch": "--- a/dominate/dom1core.py\n+++ b/dominate/dom1core.py\n@@ -37,13 +37,13 @@\n     '''\n     return self.parent\n \n-  def getElementById(self, id):\n+def getElementById(self, id):\n     '''\n     DOM API: Returns single element with matching id value.\n     '''\n     results = self.get(id=id)\n     if len(results) > 1:\n-      raise ValueError('Multiple tags with id \"%s\".' % id)\n+      raise ValueError(id % 'Multiple tags with id \"%s\".')\n     elif results:\n       return results[0]\n     return None\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing conditionals that causes the bug.",
+        "output": "",
+        "rewrite": "def getElementById(self, id):\n    '''\n    DOM API: Returns single element with matching id value.\n    '''\n    results = self.get(id=id)\n    if len(results) > 1:\n      raise ValueError('Multiple tags with id \"%s\".' % id)\n    return None",
+        "strategy": "func_pm_remove_cond",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__ud54jcx6",
+        "patch": "--- a/dominate/dom1core.py\n+++ b/dominate/dom1core.py\n@@ -37,15 +37,13 @@\n     '''\n     return self.parent\n \n-  def getElementById(self, id):\n+def getElementById(self, id):\n     '''\n     DOM API: Returns single element with matching id value.\n     '''\n     results = self.get(id=id)\n     if len(results) > 1:\n       raise ValueError('Multiple tags with id \"%s\".' % id)\n-    elif results:\n-      return results[0]\n     return None\n \n   def getElementsByTagName(self, name):\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The operations in an expression are likely incorrect.",
+        "output": "",
+        "rewrite": "def getElementById(self, id):\n    '''\n    DOM API: Returns single element with matching id value.\n    '''\n    results = self.get(id=id)\n    if len(results) > 1:\n      raise ValueError('Multiple tags with id \"%s\".' / id)\n    elif results:\n      return results[0]\n    return None",
+        "strategy": "func_pm_op_change",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_change__qaiksxic",
+        "patch": "--- a/dominate/dom1core.py\n+++ b/dominate/dom1core.py\n@@ -37,13 +37,13 @@\n     '''\n     return self.parent\n \n-  def getElementById(self, id):\n+def getElementById(self, id):\n     '''\n     DOM API: Returns single element with matching id value.\n     '''\n     results = self.get(id=id)\n     if len(results) > 1:\n-      raise ValueError('Multiple tags with id \"%s\".' % id)\n+      raise ValueError('Multiple tags with id \"%s\".' / id)\n     elif results:\n       return results[0]\n     return None\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is likely a missing assignment in the code.",
+        "output": "",
+        "rewrite": "def unescape(data):\n  '''\n  unescapes html entities. the opposite of escape.\n  '''\n  cc = re.compile(r'&(?:(?:#(\\d+))|([^;]+));')\n\n  result = []\n  while m:\n    result.append(data[0:m.start()])\n    d = m.group(1)\n    if d:\n      result.append(unichr(d))\n    else:\n      result.append(unichr(d))\n\n    data = data[m.end():]\n    m = cc.search(data)\n\n  result.append(data)\n  return ''.join(result)",
+        "strategy": "func_pm_remove_assign",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_assign__46gxpqur",
+        "patch": "--- a/dominate/util.py\n+++ b/dominate/util.py\n@@ -89,15 +89,12 @@\n   cc = re.compile(r'&(?:(?:#(\\d+))|([^;]+));')\n \n   result = []\n-  m = cc.search(data)\n   while m:\n     result.append(data[0:m.start()])\n     d = m.group(1)\n     if d:\n-      d = int(d)\n       result.append(unichr(d))\n     else:\n-      d = _unescape.get(m.group(2), ord('?'))\n       result.append(unichr(d))\n \n     data = data[m.end():]\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing conditionals that causes the bug.",
+        "output": "",
+        "rewrite": "def unescape(data):\n  '''\n  unescapes html entities. the opposite of escape.\n  '''\n  cc = re.compile(r'&(?:(?:#(\\d+))|([^;]+));')\n\n  result = []\n  m = cc.search(data)\n  while m:\n    result.append(data[0:m.start()])\n    d = m.group(1)\n\n    data = data[m.end():]\n    m = cc.search(data)\n\n  result.append(data)\n  return ''.join(result)",
+        "strategy": "func_pm_remove_cond",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__rt5faykk",
+        "patch": "--- a/dominate/util.py\n+++ b/dominate/util.py\n@@ -93,12 +93,6 @@\n   while m:\n     result.append(data[0:m.start()])\n     d = m.group(1)\n-    if d:\n-      d = int(d)\n-      result.append(unichr(d))\n-    else:\n-      d = _unescape.get(m.group(2), ord('?'))\n-      result.append(unichr(d))\n \n     data = data[m.end():]\n     m = cc.search(data)\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing loops that is causing the bug.",
+        "output": "",
+        "rewrite": "def unescape(data):\n  '''\n  unescapes html entities. the opposite of escape.\n  '''\n  cc = re.compile(r'&(?:(?:#(\\d+))|([^;]+));')\n\n  result = []\n  m = cc.search(data)\n\n  result.append(data)\n  return ''.join(result)",
+        "strategy": "func_pm_remove_loop",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_loop__zt21cg89",
+        "patch": "--- a/dominate/util.py\n+++ b/dominate/util.py\n@@ -90,18 +90,6 @@\n \n   result = []\n   m = cc.search(data)\n-  while m:\n-    result.append(data[0:m.start()])\n-    d = m.group(1)\n-    if d:\n-      d = int(d)\n-      result.append(unichr(d))\n-    else:\n-      d = _unescape.get(m.group(2), ord('?'))\n-      result.append(unichr(d))\n-\n-    data = data[m.end():]\n-    m = cc.search(data)\n \n   result.append(data)\n   return ''.join(result)\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The operands in an expression are likely in the wrong order.",
+        "output": "",
+        "rewrite": "def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n    inline = self._render_children(sb, indent_level, indent_str, pretty, xhtml)\n    if pretty and not inline:\n      sb.append('\\n')\n      sb.append((indent_level - 1) * indent_str)\n    return sb",
+        "strategy": "func_pm_op_swap",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_swap__cwkioco9",
+        "patch": "--- a/dominate/util.py\n+++ b/dominate/util.py\n@@ -125,11 +125,11 @@\n   Contains multiple elements, but does not add a level\n   '''\n   is_inline = True\n-  def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n+def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n     inline = self._render_children(sb, indent_level, indent_str, pretty, xhtml)\n     if pretty and not inline:\n       sb.append('\\n')\n-      sb.append(indent_str * (indent_level - 1))\n+      sb.append((indent_level - 1) * indent_str)\n     return sb\n \n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There are expressions or mathematical operations that are likely incomplete.",
+        "output": "",
+        "rewrite": "def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n    inline = self._render_children(sb, indent_level, indent_str, pretty, xhtml)\n    if pretty and not inline:\n      sb.append('\\n')\n      sb.append(indent_str * 1)\n    return sb",
+        "strategy": "func_pm_op_break_chains",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_break_chains__hkcd9nmi",
+        "patch": "--- a/dominate/util.py\n+++ b/dominate/util.py\n@@ -125,11 +125,11 @@\n   Contains multiple elements, but does not add a level\n   '''\n   is_inline = True\n-  def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n+def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n     inline = self._render_children(sb, indent_level, indent_str, pretty, xhtml)\n     if pretty and not inline:\n       sb.append('\\n')\n-      sb.append(indent_str * (indent_level - 1))\n+      sb.append(indent_str * 1)\n     return sb\n \n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The operations in an expression are likely incorrect.",
+        "output": "",
+        "rewrite": "def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n    inline = self._render_children(sb, indent_level, indent_str, pretty, xhtml)\n    if pretty and not inline:\n      sb.append('\\n')\n      sb.append(indent_str * (indent_level + 1))\n    return sb",
+        "strategy": "func_pm_op_change",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_change__zpd229e6",
+        "patch": "--- a/dominate/util.py\n+++ b/dominate/util.py\n@@ -125,11 +125,11 @@\n   Contains multiple elements, but does not add a level\n   '''\n   is_inline = True\n-  def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n+def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n     inline = self._render_children(sb, indent_level, indent_str, pretty, xhtml)\n     if pretty and not inline:\n       sb.append('\\n')\n-      sb.append(indent_str * (indent_level - 1))\n+      sb.append(indent_str * (indent_level + 1))\n     return sb\n \n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The constants in an expression might be incorrect.",
+        "output": "",
+        "rewrite": "def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n    inline = self._render_children(sb, indent_level, indent_str, pretty, xhtml)\n    if pretty and not inline:\n      sb.append('\\n')\n      sb.append(indent_str * (indent_level - 0))\n    return sb",
+        "strategy": "func_pm_op_change_const",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_change_const__1pjd5ald",
+        "patch": "--- a/dominate/util.py\n+++ b/dominate/util.py\n@@ -125,11 +125,11 @@\n   Contains multiple elements, but does not add a level\n   '''\n   is_inline = True\n-  def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n+def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n     inline = self._render_children(sb, indent_level, indent_str, pretty, xhtml)\n     if pretty and not inline:\n       sb.append('\\n')\n-      sb.append(indent_str * (indent_level - 1))\n+      sb.append(indent_str * (indent_level - 0))\n     return sb\n \n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing conditionals that causes the bug.",
+        "output": "",
+        "rewrite": "def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n    inline = self._render_children(sb, indent_level, indent_str, pretty, xhtml)\n    return sb",
+        "strategy": "func_pm_remove_cond",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__g6tvompb",
+        "patch": "--- a/dominate/util.py\n+++ b/dominate/util.py\n@@ -125,11 +125,8 @@\n   Contains multiple elements, but does not add a level\n   '''\n   is_inline = True\n-  def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n+def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n     inline = self._render_children(sb, indent_level, indent_str, pretty, xhtml)\n-    if pretty and not inline:\n-      sb.append('\\n')\n-      sb.append(indent_str * (indent_level - 1))\n     return sb\n \n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is likely a missing assignment in the code.",
+        "output": "",
+        "rewrite": "def clean_attribute(attribute):\n    '''\n    Normalize attribute names for shorthand and work arounds for limitations\n    in Python's syntax\n    '''\n\n    # Shorthand\n    attribute = {\n      'cls': 'class',\n      'className': 'class',\n      'class_name': 'class',\n      'klass': 'class',\n      'fr': 'for',\n      'html_for': 'for',\n      'htmlFor': 'for',\n      'phor': 'for',\n    }.get(attribute, attribute)\n\n    # Workaround for Python's reserved words\n    if attribute[0] == '_':\n      pass\n\n    # Workaround for dash\n    special_prefix = any([attribute.startswith(x) for x in ('data_', 'aria_')])\n    if attribute in set(['http_equiv']) or special_prefix:\n      attribute = attribute.replace('_', '-').lower()\n\n    # Workaround for colon\n    if attribute.split('_')[0] in ('xlink', 'xml', 'xmlns'):\n      attribute = attribute.replace('_', ':', 1).lower()\n\n    return attribute",
+        "strategy": "func_pm_remove_assign",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_assign__6gqbn6an",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -422,7 +422,7 @@\n \n \n   @staticmethod\n-  def clean_attribute(attribute):\n+def clean_attribute(attribute):\n     '''\n     Normalize attribute names for shorthand and work arounds for limitations\n     in Python's syntax\n@@ -442,7 +442,7 @@\n \n     # Workaround for Python's reserved words\n     if attribute[0] == '_':\n-      attribute = attribute[1:]\n+      pass\n \n     # Workaround for dash\n     special_prefix = any([attribute.startswith(x) for x in ('data_', 'aria_')])\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing conditionals that causes the bug.",
+        "output": "",
+        "rewrite": "def clean_attribute(attribute):\n    '''\n    Normalize attribute names for shorthand and work arounds for limitations\n    in Python's syntax\n    '''\n\n    # Shorthand\n    attribute = {\n      'cls': 'class',\n      'className': 'class',\n      'class_name': 'class',\n      'klass': 'class',\n      'fr': 'for',\n      'html_for': 'for',\n      'htmlFor': 'for',\n      'phor': 'for',\n    }.get(attribute, attribute)\n\n    # Workaround for dash\n    special_prefix = any([attribute.startswith(x) for x in ('data_', 'aria_')])\n    if attribute in set(['http_equiv']) or special_prefix:\n      attribute = attribute.replace('_', '-').lower()\n\n    # Workaround for colon\n    if attribute.split('_')[0] in ('xlink', 'xml', 'xmlns'):\n      attribute = attribute.replace('_', ':', 1).lower()\n\n    return attribute",
+        "strategy": "func_pm_remove_cond",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__3eohwjpc",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -422,7 +422,7 @@\n \n \n   @staticmethod\n-  def clean_attribute(attribute):\n+def clean_attribute(attribute):\n     '''\n     Normalize attribute names for shorthand and work arounds for limitations\n     in Python's syntax\n@@ -439,10 +439,6 @@\n       'htmlFor': 'for',\n       'phor': 'for',\n     }.get(attribute, attribute)\n-\n-    # Workaround for Python's reserved words\n-    if attribute[0] == '_':\n-      attribute = attribute[1:]\n \n     # Workaround for dash\n     special_prefix = any([attribute.startswith(x) for x in ('data_', 'aria_')])\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The operands in an expression are likely in the wrong order.",
+        "output": "",
+        "rewrite": "def add(self, *args):\n    '''\n    Add new child tags.\n    '''\n    for obj in args:\n      if isinstance(obj, numbers.Number):\n        # Convert to string so we fall into next if block\n        obj = str(obj)\n\n      if isinstance(obj, basestring):\n        obj = util.escape(obj)\n        self.children.append(obj)\n\n      elif isinstance(obj, dom_tag):\n        stack = dom_tag._with_contexts.get(_get_thread_context(), [])\n        for s in stack:\n          s.used.add(obj)\n        self.children.append(obj)\n        obj.parent = self\n\n      elif isinstance(obj, dict):\n        for attr, value in obj.items():\n          self.set_attribute(*dom_tag.clean_pair(attr, value))\n\n      elif hasattr(obj, '__iter__'):\n        for subobj in obj:\n          self.add(subobj)\n\n      else:  # wtf is it?\n        raise ValueError(obj % '%r not a tag or string.')\n\n    if len(args) == 1:\n      return args[0]\n\n    return args",
+        "strategy": "func_pm_op_swap",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_swap__1pqxr31k",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -205,7 +205,7 @@\n   __delitem__ = delete_attribute\n \n \n-  def add(self, *args):\n+def add(self, *args):\n     '''\n     Add new child tags.\n     '''\n@@ -234,7 +234,7 @@\n           self.add(subobj)\n \n       else:  # wtf is it?\n-        raise ValueError('%r not a tag or string.' % obj)\n+        raise ValueError(obj % '%r not a tag or string.')\n \n     if len(args) == 1:\n       return args[0]\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is likely a missing assignment in the code.",
+        "output": "",
+        "rewrite": "def add(self, *args):\n    '''\n    Add new child tags.\n    '''\n    for obj in args:\n      if isinstance(obj, numbers.Number):\n        # Convert to string so we fall into next if block\n        obj = str(obj)\n\n      if isinstance(obj, basestring):\n        obj = util.escape(obj)\n        self.children.append(obj)\n\n      elif isinstance(obj, dom_tag):\n        for s in stack:\n          s.used.add(obj)\n        self.children.append(obj)\n        obj.parent = self\n\n      elif isinstance(obj, dict):\n        for attr, value in obj.items():\n          self.set_attribute(*dom_tag.clean_pair(attr, value))\n\n      elif hasattr(obj, '__iter__'):\n        for subobj in obj:\n          self.add(subobj)\n\n      else:  # wtf is it?\n        raise ValueError('%r not a tag or string.' % obj)\n\n    if len(args) == 1:\n      return args[0]\n\n    return args",
+        "strategy": "func_pm_remove_assign",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_assign__k7oo552y",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -205,7 +205,7 @@\n   __delitem__ = delete_attribute\n \n \n-  def add(self, *args):\n+def add(self, *args):\n     '''\n     Add new child tags.\n     '''\n@@ -219,7 +219,6 @@\n         self.children.append(obj)\n \n       elif isinstance(obj, dom_tag):\n-        stack = dom_tag._with_contexts.get(_get_thread_context(), [])\n         for s in stack:\n           s.used.add(obj)\n         self.children.append(obj)\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The if-else conditions may be out of order, or the bodies are inverted.",
+        "output": "",
+        "rewrite": "def add(self, *args):\n    '''\n    Add new child tags.\n    '''\n    for obj in args:\n      if isinstance(obj, numbers.Number):\n        # Convert to string so we fall into next if block\n        obj = str(obj)\n\n      if isinstance(obj, basestring):\n        obj = util.escape(obj)\n        self.children.append(obj)\n\n      elif isinstance(obj, dom_tag):\n        stack = dom_tag._with_contexts.get(_get_thread_context(), [])\n        for s in stack:\n          s.used.add(obj)\n        self.children.append(obj)\n        obj.parent = self\n\n      elif isinstance(obj, dict):\n        for attr, value in obj.items():\n          self.set_attribute(*dom_tag.clean_pair(attr, value))\n\n      elif hasattr(obj, '__iter__'):  # wtf is it?\n        raise ValueError('%r not a tag or string.' % obj)\n      else:\n        for subobj in obj:\n          self.add(subobj)\n\n    if len(args) == 1:\n      return args[0]\n\n    return args",
+        "strategy": "func_pm_ctrl_invert_if",
+        "instance_id": "Knio__dominate.9082227e.func_pm_ctrl_invert_if__exsav0o1",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -205,7 +205,7 @@\n   __delitem__ = delete_attribute\n \n \n-  def add(self, *args):\n+def add(self, *args):\n     '''\n     Add new child tags.\n     '''\n@@ -229,12 +229,11 @@\n         for attr, value in obj.items():\n           self.set_attribute(*dom_tag.clean_pair(attr, value))\n \n-      elif hasattr(obj, '__iter__'):\n+      elif hasattr(obj, '__iter__'):  # wtf is it?\n+        raise ValueError('%r not a tag or string.' % obj)\n+      else:\n         for subobj in obj:\n           self.add(subobj)\n-\n-      else:  # wtf is it?\n-        raise ValueError('%r not a tag or string.' % obj)\n \n     if len(args) == 1:\n       return args[0]\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The operations in an expression are likely incorrect.",
+        "output": "",
+        "rewrite": "def add(self, *args):\n    '''\n    Add new child tags.\n    '''\n    for obj in args:\n      if isinstance(obj, numbers.Number):\n        # Convert to string so we fall into next if block\n        obj = str(obj)\n\n      if isinstance(obj, basestring):\n        obj = util.escape(obj)\n        self.children.append(obj)\n\n      elif isinstance(obj, dom_tag):\n        stack = dom_tag._with_contexts.get(_get_thread_context(), [])\n        for s in stack:\n          s.used.add(obj)\n        self.children.append(obj)\n        obj.parent = self\n\n      elif isinstance(obj, dict):\n        for attr, value in obj.items():\n          self.set_attribute(*dom_tag.clean_pair(attr, value))\n\n      elif hasattr(obj, '__iter__'):\n        for subobj in obj:\n          self.add(subobj)\n\n      else:  # wtf is it?\n        raise ValueError('%r not a tag or string.' * obj)\n\n    if len(args) == 1:\n      return args[0]\n\n    return args",
+        "strategy": "func_pm_op_change",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_change__fml9pqrw",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -205,7 +205,7 @@\n   __delitem__ = delete_attribute\n \n \n-  def add(self, *args):\n+def add(self, *args):\n     '''\n     Add new child tags.\n     '''\n@@ -234,7 +234,7 @@\n           self.add(subobj)\n \n       else:  # wtf is it?\n-        raise ValueError('%r not a tag or string.' % obj)\n+        raise ValueError('%r not a tag or string.' * obj)\n \n     if len(args) == 1:\n       return args[0]\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing conditionals that causes the bug.",
+        "output": "",
+        "rewrite": "def add(self, *args):\n    '''\n    Add new child tags.\n    '''\n    for obj in args:\n\n      if isinstance(obj, basestring):\n        obj = util.escape(obj)\n        self.children.append(obj)\n\n    if len(args) == 1:\n      return args[0]\n\n    return args",
+        "strategy": "func_pm_remove_cond",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__zxmih3mw",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -205,36 +205,15 @@\n   __delitem__ = delete_attribute\n \n \n-  def add(self, *args):\n+def add(self, *args):\n     '''\n     Add new child tags.\n     '''\n     for obj in args:\n-      if isinstance(obj, numbers.Number):\n-        # Convert to string so we fall into next if block\n-        obj = str(obj)\n \n       if isinstance(obj, basestring):\n         obj = util.escape(obj)\n         self.children.append(obj)\n-\n-      elif isinstance(obj, dom_tag):\n-        stack = dom_tag._with_contexts.get(_get_thread_context(), [])\n-        for s in stack:\n-          s.used.add(obj)\n-        self.children.append(obj)\n-        obj.parent = self\n-\n-      elif isinstance(obj, dict):\n-        for attr, value in obj.items():\n-          self.set_attribute(*dom_tag.clean_pair(attr, value))\n-\n-      elif hasattr(obj, '__iter__'):\n-        for subobj in obj:\n-          self.add(subobj)\n-\n-      else:  # wtf is it?\n-        raise ValueError('%r not a tag or string.' % obj)\n \n     if len(args) == 1:\n       return args[0]\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing loops that is causing the bug.",
+        "output": "",
+        "rewrite": "def add(self, *args):\n    '''\n    Add new child tags.\n    '''\n    for obj in args:\n      if isinstance(obj, numbers.Number):\n        # Convert to string so we fall into next if block\n        obj = str(obj)\n\n      if isinstance(obj, basestring):\n        obj = util.escape(obj)\n        self.children.append(obj)\n\n      elif isinstance(obj, dom_tag):\n        stack = dom_tag._with_contexts.get(_get_thread_context(), [])\n        for s in stack:\n          s.used.add(obj)\n        self.children.append(obj)\n        obj.parent = self\n\n      elif isinstance(obj, dict):\n        for attr, value in obj.items():\n          self.set_attribute(*dom_tag.clean_pair(attr, value))\n\n      elif hasattr(obj, '__iter__'):\n        pass\n\n      else:  # wtf is it?\n        raise ValueError('%r not a tag or string.' % obj)\n\n    if len(args) == 1:\n      return args[0]\n\n    return args",
+        "strategy": "func_pm_remove_loop",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_loop__r56uejca",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -205,7 +205,7 @@\n   __delitem__ = delete_attribute\n \n \n-  def add(self, *args):\n+def add(self, *args):\n     '''\n     Add new child tags.\n     '''\n@@ -230,8 +230,7 @@\n           self.set_attribute(*dom_tag.clean_pair(attr, value))\n \n       elif hasattr(obj, '__iter__'):\n-        for subobj in obj:\n-          self.add(subobj)\n+        pass\n \n       else:  # wtf is it?\n         raise ValueError('%r not a tag or string.' % obj)\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing conditionals that causes the bug.",
+        "output": "",
+        "rewrite": "def __call__(self, func):\n    '''\n    tag instance is being used as a decorator.\n    wrap func to make a copy of this tag\n    '''\n\n    @wraps(func)\n    def f(*args, **kwargs):\n      tag = copy.deepcopy(self)\n      tag._add_to_ctx()\n      with tag:\n        return func(*args, **kwargs) or tag\n    return f",
+        "strategy": "func_pm_remove_cond",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__sc7wzrgo",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -164,15 +164,11 @@\n       del dom_tag._with_contexts[thread_id]\n \n \n-  def __call__(self, func):\n+def __call__(self, func):\n     '''\n     tag instance is being used as a decorator.\n     wrap func to make a copy of this tag\n     '''\n-    # remove decorator from its context so it doesn't\n-    # get added in where it was defined\n-    if self._ctx:\n-      self._ctx.used.add(self)\n \n     @wraps(func)\n     def f(*args, **kwargs):\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There are missing wrappers (with, try blocks) in the code.",
+        "output": "",
+        "rewrite": "def __call__(self, func):\n    '''\n    tag instance is being used as a decorator.\n    wrap func to make a copy of this tag\n    '''\n    # remove decorator from its context so it doesn't\n    # get added in where it was defined\n    if self._ctx:\n      self._ctx.used.add(self)\n\n    @wraps(func)\n    def f(*args, **kwargs):\n      tag = copy.deepcopy(self)\n      tag._add_to_ctx()\n    return f",
+        "strategy": "func_pm_remove_wrapper",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_wrapper__j3lcizdm",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -164,7 +164,7 @@\n       del dom_tag._with_contexts[thread_id]\n \n \n-  def __call__(self, func):\n+def __call__(self, func):\n     '''\n     tag instance is being used as a decorator.\n     wrap func to make a copy of this tag\n@@ -178,8 +178,6 @@\n     def f(*args, **kwargs):\n       tag = copy.deepcopy(self)\n       tag._add_to_ctx()\n-      with tag:\n-        return func(*args, **kwargs) or tag\n     return f\n \n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is likely a missing assignment in the code.",
+        "output": "",
+        "rewrite": "def __call__(self, func):\n    '''\n    tag instance is being used as a decorator.\n    wrap func to make a copy of this tag\n    '''\n    # remove decorator from its context so it doesn't\n    # get added in where it was defined\n    if self._ctx:\n      self._ctx.used.add(self)\n\n    @wraps(func)\n    def f(*args, **kwargs):\n      tag._add_to_ctx()\n      with tag:\n        return func(*args, **kwargs) or tag\n    return f",
+        "strategy": "func_pm_remove_assign",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_assign__pwxt6erj",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -164,7 +164,7 @@\n       del dom_tag._with_contexts[thread_id]\n \n \n-  def __call__(self, func):\n+def __call__(self, func):\n     '''\n     tag instance is being used as a decorator.\n     wrap func to make a copy of this tag\n@@ -176,7 +176,6 @@\n \n     @wraps(func)\n     def f(*args, **kwargs):\n-      tag = copy.deepcopy(self)\n       tag._add_to_ctx()\n       with tag:\n         return func(*args, **kwargs) or tag\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing conditionals that causes the bug.",
+        "output": "",
+        "rewrite": "def get(self, tag=None, **kwargs):\n    '''\n    Recursively searches children for tags of a certain\n    type with matching attributes.\n    '''\n    # Stupid workaround since we can not use dom_tag in the method declaration\n    if tag is None: tag = dom_tag\n\n    attrs = [(dom_tag.clean_attribute(attr), value)\n        for attr, value in kwargs.items()]\n\n    results = []\n    for child in self.children:\n      if (isinstance(tag, basestring) and type(child).__name__ == tag) or \\\n        (not isinstance(tag, basestring) and isinstance(child, tag)):\n        pass\n    return results",
+        "strategy": "func_pm_remove_cond",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__vjkpqo07",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -257,7 +257,7 @@\n     self.children = []\n \n \n-  def get(self, tag=None, **kwargs):\n+def get(self, tag=None, **kwargs):\n     '''\n     Recursively searches children for tags of a certain\n     type with matching attributes.\n@@ -272,15 +272,7 @@\n     for child in self.children:\n       if (isinstance(tag, basestring) and type(child).__name__ == tag) or \\\n         (not isinstance(tag, basestring) and isinstance(child, tag)):\n-\n-        if all(child.attributes.get(attribute) == value\n-            for attribute, value in attrs):\n-          # If the child is of correct type and has all attributes and values\n-          # in kwargs add as a result\n-          results.append(child)\n-      if isinstance(child, dom_tag):\n-        # If the child is a dom_tag extend the search down through its children\n-        results.extend(child.get(tag, **kwargs))\n+        pass\n     return results\n \n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is likely a missing assignment in the code.",
+        "output": "",
+        "rewrite": "def get(self, tag=None, **kwargs):\n    '''\n    Recursively searches children for tags of a certain\n    type with matching attributes.\n    '''\n    # Stupid workaround since we can not use dom_tag in the method declaration\n    if tag is None: tag = dom_tag\n\n    attrs = [(dom_tag.clean_attribute(attr), value)\n        for attr, value in kwargs.items()]\n    for child in self.children:\n      if (isinstance(tag, basestring) and type(child).__name__ == tag) or \\\n        (not isinstance(tag, basestring) and isinstance(child, tag)):\n\n        if all(child.attributes.get(attribute) == value\n            for attribute, value in attrs):\n          # If the child is of correct type and has all attributes and values\n          # in kwargs add as a result\n          results.append(child)\n      if isinstance(child, dom_tag):\n        # If the child is a dom_tag extend the search down through its children\n        results.extend(child.get(tag, **kwargs))\n    return results",
+        "strategy": "func_pm_remove_assign",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_assign__xjqs2bzf",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -257,7 +257,7 @@\n     self.children = []\n \n \n-  def get(self, tag=None, **kwargs):\n+def get(self, tag=None, **kwargs):\n     '''\n     Recursively searches children for tags of a certain\n     type with matching attributes.\n@@ -267,8 +267,6 @@\n \n     attrs = [(dom_tag.clean_attribute(attr), value)\n         for attr, value in kwargs.items()]\n-\n-    results = []\n     for child in self.children:\n       if (isinstance(tag, basestring) and type(child).__name__ == tag) or \\\n         (not isinstance(tag, basestring) and isinstance(child, tag)):\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is likely a missing assignment in the code.",
+        "output": "",
+        "rewrite": "def clear(self):\n    for i in self.children:\n      if isinstance(i, dom_tag) and i.parent is self:\n        i.parent = None",
+        "strategy": "func_pm_remove_assign",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_assign__9t9757kn",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -250,11 +250,10 @@\n     self.children.remove(obj)\n \n \n-  def clear(self):\n+def clear(self):\n     for i in self.children:\n       if isinstance(i, dom_tag) and i.parent is self:\n         i.parent = None\n-    self.children = []\n \n \n   def get(self, tag=None, **kwargs):\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The lines inside a function may be out of order.",
+        "output": "",
+        "rewrite": "def clear(self):\n    self.children = []\n    for i in self.children:\n      if isinstance(i, dom_tag) and i.parent is self:\n        i.parent = None",
+        "strategy": "func_pm_ctrl_shuffle",
+        "instance_id": "Knio__dominate.9082227e.func_pm_ctrl_shuffle__qnvla9et",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -250,11 +250,11 @@\n     self.children.remove(obj)\n \n \n-  def clear(self):\n+def clear(self):\n+    self.children = []\n     for i in self.children:\n       if isinstance(i, dom_tag) and i.parent is self:\n         i.parent = None\n-    self.children = []\n \n \n   def get(self, tag=None, **kwargs):\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing loops that is causing the bug.",
+        "output": "",
+        "rewrite": "def clear(self):\n    self.children = []",
+        "strategy": "func_pm_remove_loop",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_loop__mlcrm3xa",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -250,10 +250,7 @@\n     self.children.remove(obj)\n \n \n-  def clear(self):\n-    for i in self.children:\n-      if isinstance(i, dom_tag) and i.parent is self:\n-        i.parent = None\n+def clear(self):\n     self.children = []\n \n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing conditionals that causes the bug.",
+        "output": "",
+        "rewrite": "def clear(self):\n    for i in self.children:\n      pass\n    self.children = []",
+        "strategy": "func_pm_remove_cond",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__iaxn3m1n",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -250,10 +250,9 @@\n     self.children.remove(obj)\n \n \n-  def clear(self):\n+def clear(self):\n     for i in self.children:\n-      if isinstance(i, dom_tag) and i.parent is self:\n-        i.parent = None\n+      pass\n     self.children = []\n \n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The operations in an expression are likely incorrect.",
+        "output": "",
+        "rewrite": "def __repr__(self):\n    name = '%s.%s' * (self.__module__, type(self).__name__)\n\n    attributes_len = len(self.attributes)\n    attributes = '%s attribute' % attributes_len\n    if attributes_len != 1: attributes += 's'\n\n    children_len = len(self.children)\n    children = '%s child' % children_len\n    if children_len != 1: children += 'ren'\n\n    return '<%s at %x: %s, %s>' % (name, id(self), attributes, children)",
+        "strategy": "func_pm_op_change",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_change__4hx8i6a3",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -407,8 +407,8 @@\n     return inline\n \n \n-  def __repr__(self):\n-    name = '%s.%s' % (self.__module__, type(self).__name__)\n+def __repr__(self):\n+    name = '%s.%s' * (self.__module__, type(self).__name__)\n \n     attributes_len = len(self.attributes)\n     attributes = '%s attribute' % attributes_len\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing conditionals that causes the bug.",
+        "output": "",
+        "rewrite": "def __repr__(self):\n    name = '%s.%s' % (self.__module__, type(self).__name__)\n\n    attributes_len = len(self.attributes)\n    attributes = '%s attribute' % attributes_len\n    if attributes_len != 1: attributes += 's'\n\n    children_len = len(self.children)\n    children = '%s child' % children_len\n\n    return '<%s at %x: %s, %s>' % (name, id(self), attributes, children)",
+        "strategy": "func_pm_remove_cond",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__9vfog4zy",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -407,7 +407,7 @@\n     return inline\n \n \n-  def __repr__(self):\n+def __repr__(self):\n     name = '%s.%s' % (self.__module__, type(self).__name__)\n \n     attributes_len = len(self.attributes)\n@@ -416,7 +416,6 @@\n \n     children_len = len(self.children)\n     children = '%s child' % children_len\n-    if children_len != 1: children += 'ren'\n \n     return '<%s at %x: %s, %s>' % (name, id(self), attributes, children)\n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The operands in an expression are likely in the wrong order.",
+        "output": "",
+        "rewrite": "def __repr__(self):\n    name = '%s.%s' % (self.__module__, type(self).__name__)\n\n    attributes_len = len(self.attributes)\n    attributes = attributes_len % '%s attribute'\n    if attributes_len != 1: attributes += 's'\n\n    children_len = len(self.children)\n    children = '%s child' % children_len\n    if children_len != 1: children += 'ren'\n\n    return '<%s at %x: %s, %s>' % (name, id(self), attributes, children)",
+        "strategy": "func_pm_op_swap",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_swap__v9n53t44",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -407,11 +407,11 @@\n     return inline\n \n \n-  def __repr__(self):\n+def __repr__(self):\n     name = '%s.%s' % (self.__module__, type(self).__name__)\n \n     attributes_len = len(self.attributes)\n-    attributes = '%s attribute' % attributes_len\n+    attributes = attributes_len % '%s attribute'\n     if attributes_len != 1: attributes += 's'\n \n     children_len = len(self.children)\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is likely a missing assignment in the code.",
+        "output": "",
+        "rewrite": "def __repr__(self):\n    name = '%s.%s' % (self.__module__, type(self).__name__)\n    attributes = '%s attribute' % attributes_len\n    if attributes_len != 1: attributes += 's'\n\n    children_len = len(self.children)\n    children = '%s child' % children_len\n    if children_len != 1: pass\n\n    return '<%s at %x: %s, %s>' % (name, id(self), attributes, children)",
+        "strategy": "func_pm_remove_assign",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_assign__gcwri4m4",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -407,16 +407,14 @@\n     return inline\n \n \n-  def __repr__(self):\n+def __repr__(self):\n     name = '%s.%s' % (self.__module__, type(self).__name__)\n-\n-    attributes_len = len(self.attributes)\n     attributes = '%s attribute' % attributes_len\n     if attributes_len != 1: attributes += 's'\n \n     children_len = len(self.children)\n     children = '%s child' % children_len\n-    if children_len != 1: children += 'ren'\n+    if children_len != 1: pass\n \n     return '<%s at %x: %s, %s>' % (name, id(self), attributes, children)\n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing conditionals that causes the bug.",
+        "output": "",
+        "rewrite": "def get_current(default=_get_current_none):\n  '''\n  get the current tag being used as a with context or decorated function.\n  if no context is active, raises ValueError, or returns the default, if provided\n  '''\n  h = _get_thread_context()\n  ctx = dom_tag._with_contexts.get(h, None)\n  if default is _get_current_none:\n    raise ValueError('no current context')\n  return default",
+        "strategy": "func_pm_remove_cond",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__cj5eirxi",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -484,8 +484,6 @@\n   '''\n   h = _get_thread_context()\n   ctx = dom_tag._with_contexts.get(h, None)\n-  if ctx:\n-    return ctx[-1].tag\n   if default is _get_current_none:\n     raise ValueError('no current context')\n   return default\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is likely a missing assignment in the code.",
+        "output": "",
+        "rewrite": "def get_current(default=_get_current_none):\n  '''\n  get the current tag being used as a with context or decorated function.\n  if no context is active, raises ValueError, or returns the default, if provided\n  '''\n  ctx = dom_tag._with_contexts.get(h, None)\n  if ctx:\n    return ctx[-1].tag\n  if default is _get_current_none:\n    raise ValueError('no current context')\n  return default",
+        "strategy": "func_pm_remove_assign",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_assign__yd0vae9i",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -482,7 +482,6 @@\n   get the current tag being used as a with context or decorated function.\n   if no context is active, raises ValueError, or returns the default, if provided\n   '''\n-  h = _get_thread_context()\n   ctx = dom_tag._with_contexts.get(h, None)\n   if ctx:\n     return ctx[-1].tag\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is likely a missing assignment in the code.",
+        "output": "",
+        "rewrite": "def __new__(_cls, *args, **kwargs):\n    '''\n    Check if bare tag is being used a a decorator\n    (called with a single function arg).\n    decorate the function and return\n    '''\n    if len(args) == 1 and isinstance(args[0], Callable) \\\n        and not isinstance(args[0], dom_tag) and not kwargs:\n\n      @wraps(wrapped)\n      def f(*args, **kwargs):\n        with _cls() as _tag:\n          return wrapped(*args, **kwargs) or _tag\n      return f\n    return object.__new__(_cls)",
+        "strategy": "func_pm_remove_assign",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_assign__niympyvz",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -87,7 +87,7 @@\n   is_inline = False\n \n \n-  def __new__(_cls, *args, **kwargs):\n+def __new__(_cls, *args, **kwargs):\n     '''\n     Check if bare tag is being used a a decorator\n     (called with a single function arg).\n@@ -95,7 +95,6 @@\n     '''\n     if len(args) == 1 and isinstance(args[0], Callable) \\\n         and not isinstance(args[0], dom_tag) and not kwargs:\n-      wrapped = args[0]\n \n       @wraps(wrapped)\n       def f(*args, **kwargs):\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There are missing wrappers (with, try blocks) in the code.",
+        "output": "",
+        "rewrite": "def __new__(_cls, *args, **kwargs):\n    '''\n    Check if bare tag is being used a a decorator\n    (called with a single function arg).\n    decorate the function and return\n    '''\n    if len(args) == 1 and isinstance(args[0], Callable) \\\n        and not isinstance(args[0], dom_tag) and not kwargs:\n      wrapped = args[0]\n\n      @wraps(wrapped)\n      def f(*args, **kwargs):\n        pass\n      return f\n    return object.__new__(_cls)",
+        "strategy": "func_pm_remove_wrapper",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_wrapper__ozj2g4rg",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -87,7 +87,7 @@\n   is_inline = False\n \n \n-  def __new__(_cls, *args, **kwargs):\n+def __new__(_cls, *args, **kwargs):\n     '''\n     Check if bare tag is being used a a decorator\n     (called with a single function arg).\n@@ -99,8 +99,7 @@\n \n       @wraps(wrapped)\n       def f(*args, **kwargs):\n-        with _cls() as _tag:\n-          return wrapped(*args, **kwargs) or _tag\n+        pass\n       return f\n     return object.__new__(_cls)\n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing conditionals that causes the bug.",
+        "output": "",
+        "rewrite": "def __new__(_cls, *args, **kwargs):\n    '''\n    Check if bare tag is being used a a decorator\n    (called with a single function arg).\n    decorate the function and return\n    '''\n    return object.__new__(_cls)",
+        "strategy": "func_pm_remove_cond",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__i7xxrinl",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -87,21 +87,12 @@\n   is_inline = False\n \n \n-  def __new__(_cls, *args, **kwargs):\n+def __new__(_cls, *args, **kwargs):\n     '''\n     Check if bare tag is being used a a decorator\n     (called with a single function arg).\n     decorate the function and return\n     '''\n-    if len(args) == 1 and isinstance(args[0], Callable) \\\n-        and not isinstance(args[0], dom_tag) and not kwargs:\n-      wrapped = args[0]\n-\n-      @wraps(wrapped)\n-      def f(*args, **kwargs):\n-        with _cls() as _tag:\n-          return wrapped(*args, **kwargs) or _tag\n-      return f\n     return object.__new__(_cls)\n \n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "Method(s) and their reference(s) have been removed from the class.",
+        "output": "",
+        "rewrite": "class dom_tag(object):\n  is_single = False  # Tag does not require matching end tag (ex. <hr/>)\n  is_pretty = True   # Text inside the tag should be left as-is (ex. <pre>)\n                     # otherwise, text will be escaped() and whitespace may be\n                     # modified\n  is_inline = False\n\n\n  def __new__(_cls, *args, **kwargs):\n    '''\n    Check if bare tag is being used a a decorator\n    (called with a single function arg).\n    decorate the function and return\n    '''\n    if len(args) == 1 and isinstance(args[0], Callable) \\\n        and not isinstance(args[0], dom_tag) and not kwargs:\n      wrapped = args[0]\n\n      @wraps(wrapped)\n      def f(*args, **kwargs):\n        with _cls() as _tag:\n          return wrapped(*args, **kwargs) or _tag\n      return f\n    return object.__new__(_cls)\n\n\n  # context manager\n  frame = namedtuple('frame', ['tag', 'items', 'used'])\n  # stack of frames\n  _with_contexts = defaultdict(list)\n\n  def _add_to_ctx(self):\n    stack = dom_tag._with_contexts.get(_get_thread_context())\n    if stack:\n      self._ctx = stack[-1]\n      stack[-1].items.append(self)\n\n\n  def __enter__(self):\n    stack = dom_tag._with_contexts[_get_thread_context()]\n    stack.append(dom_tag.frame(self, [], set()))\n    return self\n\n\n  def __exit__(self, type, value, traceback):\n    thread_id = _get_thread_context()\n    stack = dom_tag._with_contexts[thread_id]\n    frame = stack.pop()\n    for item in frame.items:\n      if item in frame.used: continue\n      self.add(item)\n    if not stack:\n      del dom_tag._with_contexts[thread_id]\n\n\n  def __call__(self, func):\n    '''\n    tag instance is being used as a decorator.\n    wrap func to make a copy of this tag\n    '''\n    # remove decorator from its context so it doesn't\n    # get added in where it was defined\n    if self._ctx:\n      self._ctx.used.add(self)\n\n    @wraps(func)\n    def f(*args, **kwargs):\n      tag = copy.deepcopy(self)\n      tag._add_to_ctx()\n      with tag:\n        return func(*args, **kwargs) or tag\n    return f\n\n\n  def set_attribute(self, key, value):\n    '''\n    Add or update the value of an attribute.\n    '''\n    if isinstance(key, int):\n      self.children[key] = value\n    elif isinstance(key, basestring):\n      self.attributes[key] = value\n    else:\n      raise TypeError('Only integer and string types are valid for assigning '\n          'child tags and attributes, respectively.')\n  __setitem__ = set_attribute\n\n\n  def delete_attribute(self, key):\n    if isinstance(key, int):\n      del self.children[key:key+1]\n    else:\n      del self.attributes[key]\n  __delitem__ = delete_attribute\n\n\n  def add(self, *args):\n    '''\n    Add new child tags.\n    '''\n    for obj in args:\n      if isinstance(obj, numbers.Number):\n        # Convert to string so we fall into next if block\n        obj = str(obj)\n\n      if isinstance(obj, basestring):\n        obj = util.escape(obj)\n        self.children.append(obj)\n\n      elif isinstance(obj, dom_tag):\n        stack = dom_tag._with_contexts.get(_get_thread_context(), [])\n        for s in stack:\n          s.used.add(obj)\n        self.children.append(obj)\n        obj.parent = self\n\n      elif isinstance(obj, dict):\n        for attr, value in obj.items():\n          self.set_attribute(*dom_tag.clean_pair(attr, value))\n\n      elif hasattr(obj, '__iter__'):\n        for subobj in obj:\n          self.add(subobj)\n\n      else:  # wtf is it?\n        raise ValueError('%r not a tag or string.' % obj)\n\n    if len(args) == 1:\n      return args[0]\n\n    return args\n\n\n  def add_raw_string(self, s):\n    self.children.append(s)\n\n\n  def clear(self):\n    for i in self.children:\n      if isinstance(i, dom_tag) and i.parent is self:\n        i.parent = None\n    self.children = []\n\n\n  def get(self, tag=None, **kwargs):\n    '''\n    Recursively searches children for tags of a certain\n    type with matching attributes.\n    '''\n    # Stupid workaround since we can not use dom_tag in the method declaration\n    if tag is None: tag = dom_tag\n\n    attrs = [(dom_tag.clean_attribute(attr), value)\n        for attr, value in kwargs.items()]\n\n    results = []\n    for child in self.children:\n      if (isinstance(tag, basestring) and type(child).__name__ == tag) or \\\n        (not isinstance(tag, basestring) and isinstance(child, tag)):\n\n        if all(child.attributes.get(attribute) == value\n            for attribute, value in attrs):\n          # If the child is of correct type and has all attributes and values\n          # in kwargs add as a result\n          results.append(child)\n      if isinstance(child, dom_tag):\n        # If the child is a dom_tag extend the search down through its children\n        results.extend(child.get(tag, **kwargs))\n    return results\n\n\n  def __getitem__(self, key):\n    '''\n    Returns the stored value of the specified attribute or child\n    (if it exists).\n    '''\n    if isinstance(key, int):\n      # Children are accessed using integers\n      try:\n        return object.__getattribute__(self, 'children')[key]\n      except IndexError:\n        raise IndexError('Child with index \"%s\" does not exist.' % key)\n    elif isinstance(key, basestring):\n      # Attributes are accessed using strings\n      try:\n        return object.__getattribute__(self, 'attributes')[key]\n      except KeyError:\n        raise AttributeError('Attribute \"%s\" does not exist.' % key)\n    else:\n      raise TypeError('Only integer and string types are valid for accessing '\n          'child tags and attributes, respectively.')\n  __getattr__ = __getitem__\n\n\n  def __len__(self):\n    '''\n    Number of child elements.\n    '''\n    return len(self.children)\n\n\n  def __bool__(self):\n    '''\n    Hack for \"if x\" and __len__\n    '''\n    return True\n  __nonzero__ = __bool__\n\n\n  def __iter__(self):\n    '''\n    Iterates over child elements.\n    '''\n    return self.children.__iter__()\n\n\n  def __iadd__(self, obj):\n    '''\n    Reflexive binary addition simply adds tag as a child.\n    '''\n    self.add(obj)\n    return self\n\n  # String and unicode representations are the same as render()\n  def __unicode__(self):\n    return self.render()\n  __str__ = __unicode__\n\n\n  def render(self, indent='  ', pretty=True, xhtml=False):\n    data = self._render([], 0, indent, pretty, xhtml)\n    return u''.join(data)\n\n\n  def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n    pretty = pretty and self.is_pretty\n\n    name = getattr(self, 'tagname', type(self).__name__)\n\n    # Workaround for python keywords and standard classes/methods\n    # (del, object, input)\n    if name[-1] == '_':\n      name = name[:-1]\n\n    # open tag\n    sb.append('<')\n    sb.append(name)\n\n    for attribute, value in sorted(self.attributes.items()):\n      if value in (False, None):\n        continue\n      val = unicode(value) if isinstance(value, util.text) and not value.escape else util.escape(unicode(value), True)\n      sb.append(' %s=\"%s\"' % (attribute, val))\n\n    sb.append(' />' if self.is_single and xhtml else '>')\n\n    if self.is_single:\n      return sb\n\n    inline = self._render_children(sb, indent_level + 1, indent_str, pretty, xhtml)\n    if pretty and not inline:\n      sb.append('\\n')\n      sb.append(indent_str * indent_level)\n\n    # close tag\n    sb.append('</')\n    sb.append(name)\n    sb.append('>')\n\n    return sb\n\n  def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n    inline = True\n    for child in self.children:\n      if isinstance(child, dom_tag):\n        if pretty and not child.is_inline:\n          inline = False\n          sb.append('\\n')\n          sb.append(indent_str * indent_level)\n        child._render(sb, indent_level, indent_str, pretty, xhtml)\n      else:\n        sb.append(unicode(child))\n\n    return inline\n\n\n  def __repr__(self):\n    name = '%s.%s' % (self.__module__, type(self).__name__)\n\n    attributes_len = len(self.attributes)\n    attributes = '%s attribute' % attributes_len\n    if attributes_len != 1: attributes += 's'\n\n    children_len = len(self.children)\n    children = '%s child' % children_len\n    if children_len != 1: children += 'ren'\n\n    return '<%s at %x: %s, %s>' % (name, id(self), attributes, children)\n\n\n  @staticmethod\n  def clean_attribute(attribute):\n    '''\n    Normalize attribute names for shorthand and work arounds for limitations\n    in Python's syntax\n    '''\n\n    # Shorthand\n    attribute = {\n      'cls': 'class',\n      'className': 'class',\n      'class_name': 'class',\n      'klass': 'class',\n      'fr': 'for',\n      'html_for': 'for',\n      'htmlFor': 'for',\n      'phor': 'for',\n    }.get(attribute, attribute)\n\n    # Workaround for Python's reserved words\n    if attribute[0] == '_':\n      attribute = attribute[1:]\n\n    # Workaround for dash\n    special_prefix = any([attribute.startswith(x) for x in ('data_', 'aria_')])\n    if attribute in set(['http_equiv']) or special_prefix:\n      attribute = attribute.replace('_', '-').lower()\n\n    # Workaround for colon\n    if attribute.split('_')[0] in ('xlink', 'xml', 'xmlns'):\n      attribute = attribute.replace('_', ':', 1).lower()\n\n    return attribute\n\n\n  @classmethod\n  def clean_pair(cls, attribute, value):\n    '''\n    This will call `clean_attribute` on the attribute and also allows for the\n    creation of boolean attributes.\n\n    Ex. input(selected=True) is equivalent to input(selected=\"selected\")\n    '''\n    attribute = cls.clean_attribute(attribute)\n\n    # Check for boolean attributes\n    # (i.e. selected=True becomes selected=\"selected\")\n    if value is True:\n      value = attribute\n\n    # Ignore `if value is False`: this is filtered out in render()\n\n    return (attribute, value)",
+        "strategy": "func_pm_class_rm_funcs",
+        "instance_id": "Knio__dominate.9082227e.func_pm_class_rm_funcs__eu4z3h2j",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -103,36 +103,6 @@\n           return wrapped(*args, **kwargs) or _tag\n       return f\n     return object.__new__(_cls)\n-\n-\n-  def __init__(self, *args, **kwargs):\n-    '''\n-    Creates a new tag. Child tags should be passed as arguments and attributes\n-    should be passed as keyword arguments.\n-\n-    There is a non-rendering attribute which controls how the tag renders:\n-\n-    * `__inline` - Boolean value. If True renders all children tags on the same\n-                   line.\n-    '''\n-\n-    self.attributes = {}\n-    self.children   = []\n-    self.parent     = None\n-\n-    # Does not insert newlines on all children if True (recursive attribute)\n-    self.is_inline = kwargs.pop('__inline', self.is_inline)\n-    self.is_pretty = kwargs.pop('__pretty', self.is_pretty)\n-\n-    #Add child elements\n-    if args:\n-      self.add(*args)\n-\n-    for attr, value in kwargs.items():\n-      self.set_attribute(*type(self).clean_pair(attr, value))\n-\n-    self._ctx = None\n-    self._add_to_ctx()\n \n \n   # context manager\n@@ -244,10 +214,6 @@\n \n   def add_raw_string(self, s):\n     self.children.append(s)\n-\n-\n-  def remove(self, obj):\n-    self.children.remove(obj)\n \n \n   def clear(self):\n@@ -329,14 +295,6 @@\n     return self.children.__iter__()\n \n \n-  def __contains__(self, item):\n-    '''\n-    Checks recursively if item is in children tree.\n-    Accepts both a string and a class.\n-    '''\n-    return bool(self.get(item))\n-\n-\n   def __iadd__(self, obj):\n     '''\n     Reflexive binary addition simply adds tag as a child.\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The methods in a class have been shuffled.",
+        "output": "",
+        "rewrite": "class dom_tag(object):\n  is_single = False  # Tag does not require matching end tag (ex. <hr/>)\n  is_pretty = True   # Text inside the tag should be left as-is (ex. <pre>)\n                     # otherwise, text will be escaped() and whitespace may be\n                     # modified\n  is_inline = False\n\n\n  # context manager\n  frame = namedtuple('frame', ['tag', 'items', 'used'])\n  # stack of frames\n  _with_contexts = defaultdict(list)\n  __setitem__ = set_attribute\n  __delitem__ = delete_attribute\n  __getattr__ = __getitem__\n  __nonzero__ = __bool__\n  __str__ = __unicode__\n\n\n  def __iter__(self):\n    '''\n    Iterates over child elements.\n    '''\n    return self.children.__iter__()\n\n\n  def add(self, *args):\n    '''\n    Add new child tags.\n    '''\n    for obj in args:\n      if isinstance(obj, numbers.Number):\n        # Convert to string so we fall into next if block\n        obj = str(obj)\n\n      if isinstance(obj, basestring):\n        obj = util.escape(obj)\n        self.children.append(obj)\n\n      elif isinstance(obj, dom_tag):\n        stack = dom_tag._with_contexts.get(_get_thread_context(), [])\n        for s in stack:\n          s.used.add(obj)\n        self.children.append(obj)\n        obj.parent = self\n\n      elif isinstance(obj, dict):\n        for attr, value in obj.items():\n          self.set_attribute(*dom_tag.clean_pair(attr, value))\n\n      elif hasattr(obj, '__iter__'):\n        for subobj in obj:\n          self.add(subobj)\n\n      else:  # wtf is it?\n        raise ValueError('%r not a tag or string.' % obj)\n\n    if len(args) == 1:\n      return args[0]\n\n    return args\n\n\n  def __bool__(self):\n    '''\n    Hack for \"if x\" and __len__\n    '''\n    return True\n\n\n  def remove(self, obj):\n    self.children.remove(obj)\n\n  # String and unicode representations are the same as render()\n  def __unicode__(self):\n    return self.render()\n\n\n  def __repr__(self):\n    name = '%s.%s' % (self.__module__, type(self).__name__)\n\n    attributes_len = len(self.attributes)\n    attributes = '%s attribute' % attributes_len\n    if attributes_len != 1: attributes += 's'\n\n    children_len = len(self.children)\n    children = '%s child' % children_len\n    if children_len != 1: children += 'ren'\n\n    return '<%s at %x: %s, %s>' % (name, id(self), attributes, children)\n\n\n  def __enter__(self):\n    stack = dom_tag._with_contexts[_get_thread_context()]\n    stack.append(dom_tag.frame(self, [], set()))\n    return self\n\n\n  def __contains__(self, item):\n    '''\n    Checks recursively if item is in children tree.\n    Accepts both a string and a class.\n    '''\n    return bool(self.get(item))\n\n\n  def __getitem__(self, key):\n    '''\n    Returns the stored value of the specified attribute or child\n    (if it exists).\n    '''\n    if isinstance(key, int):\n      # Children are accessed using integers\n      try:\n        return object.__getattribute__(self, 'children')[key]\n      except IndexError:\n        raise IndexError('Child with index \"%s\" does not exist.' % key)\n    elif isinstance(key, basestring):\n      # Attributes are accessed using strings\n      try:\n        return object.__getattribute__(self, 'attributes')[key]\n      except KeyError:\n        raise AttributeError('Attribute \"%s\" does not exist.' % key)\n    else:\n      raise TypeError('Only integer and string types are valid for accessing '\n          'child tags and attributes, respectively.')\n\n\n  def __init__(self, *args, **kwargs):\n    '''\n    Creates a new tag. Child tags should be passed as arguments and attributes\n    should be passed as keyword arguments.\n\n    There is a non-rendering attribute which controls how the tag renders:\n\n    * `__inline` - Boolean value. If True renders all children tags on the same\n                   line.\n    '''\n\n    self.attributes = {}\n    self.children   = []\n    self.parent     = None\n\n    # Does not insert newlines on all children if True (recursive attribute)\n    self.is_inline = kwargs.pop('__inline', self.is_inline)\n    self.is_pretty = kwargs.pop('__pretty', self.is_pretty)\n\n    #Add child elements\n    if args:\n      self.add(*args)\n\n    for attr, value in kwargs.items():\n      self.set_attribute(*type(self).clean_pair(attr, value))\n\n    self._ctx = None\n    self._add_to_ctx()\n\n\n  def __len__(self):\n    '''\n    Number of child elements.\n    '''\n    return len(self.children)\n\n\n  def delete_attribute(self, key):\n    if isinstance(key, int):\n      del self.children[key:key+1]\n    else:\n      del self.attributes[key]\n\n\n  def __new__(_cls, *args, **kwargs):\n    '''\n    Check if bare tag is being used a a decorator\n    (called with a single function arg).\n    decorate the function and return\n    '''\n    if len(args) == 1 and isinstance(args[0], Callable) \\\n        and not isinstance(args[0], dom_tag) and not kwargs:\n      wrapped = args[0]\n\n      @wraps(wrapped)\n      def f(*args, **kwargs):\n        with _cls() as _tag:\n          return wrapped(*args, **kwargs) or _tag\n      return f\n    return object.__new__(_cls)\n\n\n  @staticmethod\n  def clean_attribute(attribute):\n    '''\n    Normalize attribute names for shorthand and work arounds for limitations\n    in Python's syntax\n    '''\n\n    # Shorthand\n    attribute = {\n      'cls': 'class',\n      'className': 'class',\n      'class_name': 'class',\n      'klass': 'class',\n      'fr': 'for',\n      'html_for': 'for',\n      'htmlFor': 'for',\n      'phor': 'for',\n    }.get(attribute, attribute)\n\n    # Workaround for Python's reserved words\n    if attribute[0] == '_':\n      attribute = attribute[1:]\n\n    # Workaround for dash\n    special_prefix = any([attribute.startswith(x) for x in ('data_', 'aria_')])\n    if attribute in set(['http_equiv']) or special_prefix:\n      attribute = attribute.replace('_', '-').lower()\n\n    # Workaround for colon\n    if attribute.split('_')[0] in ('xlink', 'xml', 'xmlns'):\n      attribute = attribute.replace('_', ':', 1).lower()\n\n    return attribute\n\n\n  def clear(self):\n    for i in self.children:\n      if isinstance(i, dom_tag) and i.parent is self:\n        i.parent = None\n    self.children = []\n\n\n  def add_raw_string(self, s):\n    self.children.append(s)\n\n\n  def __exit__(self, type, value, traceback):\n    thread_id = _get_thread_context()\n    stack = dom_tag._with_contexts[thread_id]\n    frame = stack.pop()\n    for item in frame.items:\n      if item in frame.used: continue\n      self.add(item)\n    if not stack:\n      del dom_tag._with_contexts[thread_id]\n\n  def _add_to_ctx(self):\n    stack = dom_tag._with_contexts.get(_get_thread_context())\n    if stack:\n      self._ctx = stack[-1]\n      stack[-1].items.append(self)\n\n\n  def render(self, indent='  ', pretty=True, xhtml=False):\n    data = self._render([], 0, indent, pretty, xhtml)\n    return u''.join(data)\n\n\n  def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n    pretty = pretty and self.is_pretty\n\n    name = getattr(self, 'tagname', type(self).__name__)\n\n    # Workaround for python keywords and standard classes/methods\n    # (del, object, input)\n    if name[-1] == '_':\n      name = name[:-1]\n\n    # open tag\n    sb.append('<')\n    sb.append(name)\n\n    for attribute, value in sorted(self.attributes.items()):\n      if value in (False, None):\n        continue\n      val = unicode(value) if isinstance(value, util.text) and not value.escape else util.escape(unicode(value), True)\n      sb.append(' %s=\"%s\"' % (attribute, val))\n\n    sb.append(' />' if self.is_single and xhtml else '>')\n\n    if self.is_single:\n      return sb\n\n    inline = self._render_children(sb, indent_level + 1, indent_str, pretty, xhtml)\n    if pretty and not inline:\n      sb.append('\\n')\n      sb.append(indent_str * indent_level)\n\n    # close tag\n    sb.append('</')\n    sb.append(name)\n    sb.append('>')\n\n    return sb\n\n\n  @classmethod\n  def clean_pair(cls, attribute, value):\n    '''\n    This will call `clean_attribute` on the attribute and also allows for the\n    creation of boolean attributes.\n\n    Ex. input(selected=True) is equivalent to input(selected=\"selected\")\n    '''\n    attribute = cls.clean_attribute(attribute)\n\n    # Check for boolean attributes\n    # (i.e. selected=True becomes selected=\"selected\")\n    if value is True:\n      value = attribute\n\n    # Ignore `if value is False`: this is filtered out in render()\n\n    return (attribute, value)\n\n\n  def set_attribute(self, key, value):\n    '''\n    Add or update the value of an attribute.\n    '''\n    if isinstance(key, int):\n      self.children[key] = value\n    elif isinstance(key, basestring):\n      self.attributes[key] = value\n    else:\n      raise TypeError('Only integer and string types are valid for assigning '\n          'child tags and attributes, respectively.')\n\n\n  def __call__(self, func):\n    '''\n    tag instance is being used as a decorator.\n    wrap func to make a copy of this tag\n    '''\n    # remove decorator from its context so it doesn't\n    # get added in where it was defined\n    if self._ctx:\n      self._ctx.used.add(self)\n\n    @wraps(func)\n    def f(*args, **kwargs):\n      tag = copy.deepcopy(self)\n      tag._add_to_ctx()\n      with tag:\n        return func(*args, **kwargs) or tag\n    return f\n\n\n  def __iadd__(self, obj):\n    '''\n    Reflexive binary addition simply adds tag as a child.\n    '''\n    self.add(obj)\n    return self\n\n\n  def get(self, tag=None, **kwargs):\n    '''\n    Recursively searches children for tags of a certain\n    type with matching attributes.\n    '''\n    # Stupid workaround since we can not use dom_tag in the method declaration\n    if tag is None: tag = dom_tag\n\n    attrs = [(dom_tag.clean_attribute(attr), value)\n        for attr, value in kwargs.items()]\n\n    results = []\n    for child in self.children:\n      if (isinstance(tag, basestring) and type(child).__name__ == tag) or \\\n        (not isinstance(tag, basestring) and isinstance(child, tag)):\n\n        if all(child.attributes.get(attribute) == value\n            for attribute, value in attrs):\n          # If the child is of correct type and has all attributes and values\n          # in kwargs add as a result\n          results.append(child)\n      if isinstance(child, dom_tag):\n        # If the child is a dom_tag extend the search down through its children\n        results.extend(child.get(tag, **kwargs))\n    return results\n\n  def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n    inline = True\n    for child in self.children:\n      if isinstance(child, dom_tag):\n        if pretty and not child.is_inline:\n          inline = False\n          sb.append('\\n')\n          sb.append(indent_str * indent_level)\n        child._render(sb, indent_level, indent_str, pretty, xhtml)\n      else:\n        sb.append(unicode(child))\n\n    return inline",
+        "strategy": "func_pm_class_shuffle_funcs",
+        "instance_id": "Knio__dominate.9082227e.func_pm_class_shuffle_funcs__ynhtcwlq",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -87,122 +87,22 @@\n   is_inline = False\n \n \n-  def __new__(_cls, *args, **kwargs):\n-    '''\n-    Check if bare tag is being used a a decorator\n-    (called with a single function arg).\n-    decorate the function and return\n-    '''\n-    if len(args) == 1 and isinstance(args[0], Callable) \\\n-        and not isinstance(args[0], dom_tag) and not kwargs:\n-      wrapped = args[0]\n-\n-      @wraps(wrapped)\n-      def f(*args, **kwargs):\n-        with _cls() as _tag:\n-          return wrapped(*args, **kwargs) or _tag\n-      return f\n-    return object.__new__(_cls)\n-\n-\n-  def __init__(self, *args, **kwargs):\n-    '''\n-    Creates a new tag. Child tags should be passed as arguments and attributes\n-    should be passed as keyword arguments.\n-\n-    There is a non-rendering attribute which controls how the tag renders:\n-\n-    * `__inline` - Boolean value. If True renders all children tags on the same\n-                   line.\n-    '''\n-\n-    self.attributes = {}\n-    self.children   = []\n-    self.parent     = None\n-\n-    # Does not insert newlines on all children if True (recursive attribute)\n-    self.is_inline = kwargs.pop('__inline', self.is_inline)\n-    self.is_pretty = kwargs.pop('__pretty', self.is_pretty)\n-\n-    #Add child elements\n-    if args:\n-      self.add(*args)\n-\n-    for attr, value in kwargs.items():\n-      self.set_attribute(*type(self).clean_pair(attr, value))\n-\n-    self._ctx = None\n-    self._add_to_ctx()\n-\n-\n   # context manager\n   frame = namedtuple('frame', ['tag', 'items', 'used'])\n   # stack of frames\n   _with_contexts = defaultdict(list)\n-\n-  def _add_to_ctx(self):\n-    stack = dom_tag._with_contexts.get(_get_thread_context())\n-    if stack:\n-      self._ctx = stack[-1]\n-      stack[-1].items.append(self)\n-\n-\n-  def __enter__(self):\n-    stack = dom_tag._with_contexts[_get_thread_context()]\n-    stack.append(dom_tag.frame(self, [], set()))\n-    return self\n-\n-\n-  def __exit__(self, type, value, traceback):\n-    thread_id = _get_thread_context()\n-    stack = dom_tag._with_contexts[thread_id]\n-    frame = stack.pop()\n-    for item in frame.items:\n-      if item in frame.used: continue\n-      self.add(item)\n-    if not stack:\n-      del dom_tag._with_contexts[thread_id]\n-\n-\n-  def __call__(self, func):\n-    '''\n-    tag instance is being used as a decorator.\n-    wrap func to make a copy of this tag\n-    '''\n-    # remove decorator from its context so it doesn't\n-    # get added in where it was defined\n-    if self._ctx:\n-      self._ctx.used.add(self)\n-\n-    @wraps(func)\n-    def f(*args, **kwargs):\n-      tag = copy.deepcopy(self)\n-      tag._add_to_ctx()\n-      with tag:\n-        return func(*args, **kwargs) or tag\n-    return f\n-\n-\n-  def set_attribute(self, key, value):\n-    '''\n-    Add or update the value of an attribute.\n-    '''\n-    if isinstance(key, int):\n-      self.children[key] = value\n-    elif isinstance(key, basestring):\n-      self.attributes[key] = value\n-    else:\n-      raise TypeError('Only integer and string types are valid for assigning '\n-          'child tags and attributes, respectively.')\n   __setitem__ = set_attribute\n-\n-\n-  def delete_attribute(self, key):\n-    if isinstance(key, int):\n-      del self.children[key:key+1]\n-    else:\n-      del self.attributes[key]\n   __delitem__ = delete_attribute\n+  __getattr__ = __getitem__\n+  __nonzero__ = __bool__\n+  __str__ = __unicode__\n+\n+\n+  def __iter__(self):\n+    '''\n+    Iterates over child elements.\n+    '''\n+    return self.children.__iter__()\n \n \n   def add(self, *args):\n@@ -242,46 +142,47 @@\n     return args\n \n \n-  def add_raw_string(self, s):\n-    self.children.append(s)\n+  def __bool__(self):\n+    '''\n+    Hack for \"if x\" and __len__\n+    '''\n+    return True\n \n \n   def remove(self, obj):\n     self.children.remove(obj)\n \n-\n-  def clear(self):\n-    for i in self.children:\n-      if isinstance(i, dom_tag) and i.parent is self:\n-        i.parent = None\n-    self.children = []\n-\n-\n-  def get(self, tag=None, **kwargs):\n-    '''\n-    Recursively searches children for tags of a certain\n-    type with matching attributes.\n-    '''\n-    # Stupid workaround since we can not use dom_tag in the method declaration\n-    if tag is None: tag = dom_tag\n-\n-    attrs = [(dom_tag.clean_attribute(attr), value)\n-        for attr, value in kwargs.items()]\n-\n-    results = []\n-    for child in self.children:\n-      if (isinstance(tag, basestring) and type(child).__name__ == tag) or \\\n-        (not isinstance(tag, basestring) and isinstance(child, tag)):\n-\n-        if all(child.attributes.get(attribute) == value\n-            for attribute, value in attrs):\n-          # If the child is of correct type and has all attributes and values\n-          # in kwargs add as a result\n-          results.append(child)\n-      if isinstance(child, dom_tag):\n-        # If the child is a dom_tag extend the search down through its children\n-        results.extend(child.get(tag, **kwargs))\n-    return results\n+  # String and unicode representations are the same as render()\n+  def __unicode__(self):\n+    return self.render()\n+\n+\n+  def __repr__(self):\n+    name = '%s.%s' % (self.__module__, type(self).__name__)\n+\n+    attributes_len = len(self.attributes)\n+    attributes = '%s attribute' % attributes_len\n+    if attributes_len != 1: attributes += 's'\n+\n+    children_len = len(self.children)\n+    children = '%s child' % children_len\n+    if children_len != 1: children += 'ren'\n+\n+    return '<%s at %x: %s, %s>' % (name, id(self), attributes, children)\n+\n+\n+  def __enter__(self):\n+    stack = dom_tag._with_contexts[_get_thread_context()]\n+    stack.append(dom_tag.frame(self, [], set()))\n+    return self\n+\n+\n+  def __contains__(self, item):\n+    '''\n+    Checks recursively if item is in children tree.\n+    Accepts both a string and a class.\n+    '''\n+    return bool(self.get(item))\n \n \n   def __getitem__(self, key):\n@@ -304,7 +205,36 @@\n     else:\n       raise TypeError('Only integer and string types are valid for accessing '\n           'child tags and attributes, respectively.')\n-  __getattr__ = __getitem__\n+\n+\n+  def __init__(self, *args, **kwargs):\n+    '''\n+    Creates a new tag. Child tags should be passed as arguments and attributes\n+    should be passed as keyword arguments.\n+\n+    There is a non-rendering attribute which controls how the tag renders:\n+\n+    * `__inline` - Boolean value. If True renders all children tags on the same\n+                   line.\n+    '''\n+\n+    self.attributes = {}\n+    self.children   = []\n+    self.parent     = None\n+\n+    # Does not insert newlines on all children if True (recursive attribute)\n+    self.is_inline = kwargs.pop('__inline', self.is_inline)\n+    self.is_pretty = kwargs.pop('__pretty', self.is_pretty)\n+\n+    #Add child elements\n+    if args:\n+      self.add(*args)\n+\n+    for attr, value in kwargs.items():\n+      self.set_attribute(*type(self).clean_pair(attr, value))\n+\n+    self._ctx = None\n+    self._add_to_ctx()\n \n \n   def __len__(self):\n@@ -314,40 +244,92 @@\n     return len(self.children)\n \n \n-  def __bool__(self):\n-    '''\n-    Hack for \"if x\" and __len__\n-    '''\n-    return True\n-  __nonzero__ = __bool__\n-\n-\n-  def __iter__(self):\n-    '''\n-    Iterates over child elements.\n-    '''\n-    return self.children.__iter__()\n-\n-\n-  def __contains__(self, item):\n-    '''\n-    Checks recursively if item is in children tree.\n-    Accepts both a string and a class.\n-    '''\n-    return bool(self.get(item))\n-\n-\n-  def __iadd__(self, obj):\n-    '''\n-    Reflexive binary addition simply adds tag as a child.\n-    '''\n-    self.add(obj)\n-    return self\n-\n-  # String and unicode representations are the same as render()\n-  def __unicode__(self):\n-    return self.render()\n-  __str__ = __unicode__\n+  def delete_attribute(self, key):\n+    if isinstance(key, int):\n+      del self.children[key:key+1]\n+    else:\n+      del self.attributes[key]\n+\n+\n+  def __new__(_cls, *args, **kwargs):\n+    '''\n+    Check if bare tag is being used a a decorator\n+    (called with a single function arg).\n+    decorate the function and return\n+    '''\n+    if len(args) == 1 and isinstance(args[0], Callable) \\\n+        and not isinstance(args[0], dom_tag) and not kwargs:\n+      wrapped = args[0]\n+\n+      @wraps(wrapped)\n+      def f(*args, **kwargs):\n+        with _cls() as _tag:\n+          return wrapped(*args, **kwargs) or _tag\n+      return f\n+    return object.__new__(_cls)\n+\n+\n+  @staticmethod\n+  def clean_attribute(attribute):\n+    '''\n+    Normalize attribute names for shorthand and work arounds for limitations\n+    in Python's syntax\n+    '''\n+\n+    # Shorthand\n+    attribute = {\n+      'cls': 'class',\n+      'className': 'class',\n+      'class_name': 'class',\n+      'klass': 'class',\n+      'fr': 'for',\n+      'html_for': 'for',\n+      'htmlFor': 'for',\n+      'phor': 'for',\n+    }.get(attribute, attribute)\n+\n+    # Workaround for Python's reserved words\n+    if attribute[0] == '_':\n+      attribute = attribute[1:]\n+\n+    # Workaround for dash\n+    special_prefix = any([attribute.startswith(x) for x in ('data_', 'aria_')])\n+    if attribute in set(['http_equiv']) or special_prefix:\n+      attribute = attribute.replace('_', '-').lower()\n+\n+    # Workaround for colon\n+    if attribute.split('_')[0] in ('xlink', 'xml', 'xmlns'):\n+      attribute = attribute.replace('_', ':', 1).lower()\n+\n+    return attribute\n+\n+\n+  def clear(self):\n+    for i in self.children:\n+      if isinstance(i, dom_tag) and i.parent is self:\n+        i.parent = None\n+    self.children = []\n+\n+\n+  def add_raw_string(self, s):\n+    self.children.append(s)\n+\n+\n+  def __exit__(self, type, value, traceback):\n+    thread_id = _get_thread_context()\n+    stack = dom_tag._with_contexts[thread_id]\n+    frame = stack.pop()\n+    for item in frame.items:\n+      if item in frame.used: continue\n+      self.add(item)\n+    if not stack:\n+      del dom_tag._with_contexts[thread_id]\n+\n+  def _add_to_ctx(self):\n+    stack = dom_tag._with_contexts.get(_get_thread_context())\n+    if stack:\n+      self._ctx = stack[-1]\n+      stack[-1].items.append(self)\n \n \n   def render(self, indent='  ', pretty=True, xhtml=False):\n@@ -391,6 +373,93 @@\n     sb.append('>')\n \n     return sb\n+\n+\n+  @classmethod\n+  def clean_pair(cls, attribute, value):\n+    '''\n+    This will call `clean_attribute` on the attribute and also allows for the\n+    creation of boolean attributes.\n+\n+    Ex. input(selected=True) is equivalent to input(selected=\"selected\")\n+    '''\n+    attribute = cls.clean_attribute(attribute)\n+\n+    # Check for boolean attributes\n+    # (i.e. selected=True becomes selected=\"selected\")\n+    if value is True:\n+      value = attribute\n+\n+    # Ignore `if value is False`: this is filtered out in render()\n+\n+    return (attribute, value)\n+\n+\n+  def set_attribute(self, key, value):\n+    '''\n+    Add or update the value of an attribute.\n+    '''\n+    if isinstance(key, int):\n+      self.children[key] = value\n+    elif isinstance(key, basestring):\n+      self.attributes[key] = value\n+    else:\n+      raise TypeError('Only integer and string types are valid for assigning '\n+          'child tags and attributes, respectively.')\n+\n+\n+  def __call__(self, func):\n+    '''\n+    tag instance is being used as a decorator.\n+    wrap func to make a copy of this tag\n+    '''\n+    # remove decorator from its context so it doesn't\n+    # get added in where it was defined\n+    if self._ctx:\n+      self._ctx.used.add(self)\n+\n+    @wraps(func)\n+    def f(*args, **kwargs):\n+      tag = copy.deepcopy(self)\n+      tag._add_to_ctx()\n+      with tag:\n+        return func(*args, **kwargs) or tag\n+    return f\n+\n+\n+  def __iadd__(self, obj):\n+    '''\n+    Reflexive binary addition simply adds tag as a child.\n+    '''\n+    self.add(obj)\n+    return self\n+\n+\n+  def get(self, tag=None, **kwargs):\n+    '''\n+    Recursively searches children for tags of a certain\n+    type with matching attributes.\n+    '''\n+    # Stupid workaround since we can not use dom_tag in the method declaration\n+    if tag is None: tag = dom_tag\n+\n+    attrs = [(dom_tag.clean_attribute(attr), value)\n+        for attr, value in kwargs.items()]\n+\n+    results = []\n+    for child in self.children:\n+      if (isinstance(tag, basestring) and type(child).__name__ == tag) or \\\n+        (not isinstance(tag, basestring) and isinstance(child, tag)):\n+\n+        if all(child.attributes.get(attribute) == value\n+            for attribute, value in attrs):\n+          # If the child is of correct type and has all attributes and values\n+          # in kwargs add as a result\n+          results.append(child)\n+      if isinstance(child, dom_tag):\n+        # If the child is a dom_tag extend the search down through its children\n+        results.extend(child.get(tag, **kwargs))\n+    return results\n \n   def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n     inline = True\n@@ -405,75 +474,6 @@\n         sb.append(unicode(child))\n \n     return inline\n-\n-\n-  def __repr__(self):\n-    name = '%s.%s' % (self.__module__, type(self).__name__)\n-\n-    attributes_len = len(self.attributes)\n-    attributes = '%s attribute' % attributes_len\n-    if attributes_len != 1: attributes += 's'\n-\n-    children_len = len(self.children)\n-    children = '%s child' % children_len\n-    if children_len != 1: children += 'ren'\n-\n-    return '<%s at %x: %s, %s>' % (name, id(self), attributes, children)\n-\n-\n-  @staticmethod\n-  def clean_attribute(attribute):\n-    '''\n-    Normalize attribute names for shorthand and work arounds for limitations\n-    in Python's syntax\n-    '''\n-\n-    # Shorthand\n-    attribute = {\n-      'cls': 'class',\n-      'className': 'class',\n-      'class_name': 'class',\n-      'klass': 'class',\n-      'fr': 'for',\n-      'html_for': 'for',\n-      'htmlFor': 'for',\n-      'phor': 'for',\n-    }.get(attribute, attribute)\n-\n-    # Workaround for Python's reserved words\n-    if attribute[0] == '_':\n-      attribute = attribute[1:]\n-\n-    # Workaround for dash\n-    special_prefix = any([attribute.startswith(x) for x in ('data_', 'aria_')])\n-    if attribute in set(['http_equiv']) or special_prefix:\n-      attribute = attribute.replace('_', '-').lower()\n-\n-    # Workaround for colon\n-    if attribute.split('_')[0] in ('xlink', 'xml', 'xmlns'):\n-      attribute = attribute.replace('_', ':', 1).lower()\n-\n-    return attribute\n-\n-\n-  @classmethod\n-  def clean_pair(cls, attribute, value):\n-    '''\n-    This will call `clean_attribute` on the attribute and also allows for the\n-    creation of boolean attributes.\n-\n-    Ex. input(selected=True) is equivalent to input(selected=\"selected\")\n-    '''\n-    attribute = cls.clean_attribute(attribute)\n-\n-    # Check for boolean attributes\n-    # (i.e. selected=True becomes selected=\"selected\")\n-    if value is True:\n-      value = attribute\n-\n-    # Ignore `if value is False`: this is filtered out in render()\n-\n-    return (attribute, value)\n \n \n _get_current_none = object()\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The base class has been removed from the class definition.",
+        "output": "",
+        "rewrite": "class dom_tag():\n  is_single = False  # Tag does not require matching end tag (ex. <hr/>)\n  is_pretty = True   # Text inside the tag should be left as-is (ex. <pre>)\n                     # otherwise, text will be escaped() and whitespace may be\n                     # modified\n  is_inline = False\n\n\n  def __new__(_cls, *args, **kwargs):\n    '''\n    Check if bare tag is being used a a decorator\n    (called with a single function arg).\n    decorate the function and return\n    '''\n    if len(args) == 1 and isinstance(args[0], Callable) \\\n        and not isinstance(args[0], dom_tag) and not kwargs:\n      wrapped = args[0]\n\n      @wraps(wrapped)\n      def f(*args, **kwargs):\n        with _cls() as _tag:\n          return wrapped(*args, **kwargs) or _tag\n      return f\n    return object.__new__(_cls)\n\n\n  def __init__(self, *args, **kwargs):\n    '''\n    Creates a new tag. Child tags should be passed as arguments and attributes\n    should be passed as keyword arguments.\n\n    There is a non-rendering attribute which controls how the tag renders:\n\n    * `__inline` - Boolean value. If True renders all children tags on the same\n                   line.\n    '''\n\n    self.attributes = {}\n    self.children   = []\n    self.parent     = None\n\n    # Does not insert newlines on all children if True (recursive attribute)\n    self.is_inline = kwargs.pop('__inline', self.is_inline)\n    self.is_pretty = kwargs.pop('__pretty', self.is_pretty)\n\n    #Add child elements\n    if args:\n      self.add(*args)\n\n    for attr, value in kwargs.items():\n      self.set_attribute(*type(self).clean_pair(attr, value))\n\n    self._ctx = None\n    self._add_to_ctx()\n\n\n  # context manager\n  frame = namedtuple('frame', ['tag', 'items', 'used'])\n  # stack of frames\n  _with_contexts = defaultdict(list)\n\n  def _add_to_ctx(self):\n    stack = dom_tag._with_contexts.get(_get_thread_context())\n    if stack:\n      self._ctx = stack[-1]\n      stack[-1].items.append(self)\n\n\n  def __enter__(self):\n    stack = dom_tag._with_contexts[_get_thread_context()]\n    stack.append(dom_tag.frame(self, [], set()))\n    return self\n\n\n  def __exit__(self, type, value, traceback):\n    thread_id = _get_thread_context()\n    stack = dom_tag._with_contexts[thread_id]\n    frame = stack.pop()\n    for item in frame.items:\n      if item in frame.used: continue\n      self.add(item)\n    if not stack:\n      del dom_tag._with_contexts[thread_id]\n\n\n  def __call__(self, func):\n    '''\n    tag instance is being used as a decorator.\n    wrap func to make a copy of this tag\n    '''\n    # remove decorator from its context so it doesn't\n    # get added in where it was defined\n    if self._ctx:\n      self._ctx.used.add(self)\n\n    @wraps(func)\n    def f(*args, **kwargs):\n      tag = copy.deepcopy(self)\n      tag._add_to_ctx()\n      with tag:\n        return func(*args, **kwargs) or tag\n    return f\n\n\n  def set_attribute(self, key, value):\n    '''\n    Add or update the value of an attribute.\n    '''\n    if isinstance(key, int):\n      self.children[key] = value\n    elif isinstance(key, basestring):\n      self.attributes[key] = value\n    else:\n      raise TypeError('Only integer and string types are valid for assigning '\n          'child tags and attributes, respectively.')\n  __setitem__ = set_attribute\n\n\n  def delete_attribute(self, key):\n    if isinstance(key, int):\n      del self.children[key:key+1]\n    else:\n      del self.attributes[key]\n  __delitem__ = delete_attribute\n\n\n  def add(self, *args):\n    '''\n    Add new child tags.\n    '''\n    for obj in args:\n      if isinstance(obj, numbers.Number):\n        # Convert to string so we fall into next if block\n        obj = str(obj)\n\n      if isinstance(obj, basestring):\n        obj = util.escape(obj)\n        self.children.append(obj)\n\n      elif isinstance(obj, dom_tag):\n        stack = dom_tag._with_contexts.get(_get_thread_context(), [])\n        for s in stack:\n          s.used.add(obj)\n        self.children.append(obj)\n        obj.parent = self\n\n      elif isinstance(obj, dict):\n        for attr, value in obj.items():\n          self.set_attribute(*dom_tag.clean_pair(attr, value))\n\n      elif hasattr(obj, '__iter__'):\n        for subobj in obj:\n          self.add(subobj)\n\n      else:  # wtf is it?\n        raise ValueError('%r not a tag or string.' % obj)\n\n    if len(args) == 1:\n      return args[0]\n\n    return args\n\n\n  def add_raw_string(self, s):\n    self.children.append(s)\n\n\n  def remove(self, obj):\n    self.children.remove(obj)\n\n\n  def clear(self):\n    for i in self.children:\n      if isinstance(i, dom_tag) and i.parent is self:\n        i.parent = None\n    self.children = []\n\n\n  def get(self, tag=None, **kwargs):\n    '''\n    Recursively searches children for tags of a certain\n    type with matching attributes.\n    '''\n    # Stupid workaround since we can not use dom_tag in the method declaration\n    if tag is None: tag = dom_tag\n\n    attrs = [(dom_tag.clean_attribute(attr), value)\n        for attr, value in kwargs.items()]\n\n    results = []\n    for child in self.children:\n      if (isinstance(tag, basestring) and type(child).__name__ == tag) or \\\n        (not isinstance(tag, basestring) and isinstance(child, tag)):\n\n        if all(child.attributes.get(attribute) == value\n            for attribute, value in attrs):\n          # If the child is of correct type and has all attributes and values\n          # in kwargs add as a result\n          results.append(child)\n      if isinstance(child, dom_tag):\n        # If the child is a dom_tag extend the search down through its children\n        results.extend(child.get(tag, **kwargs))\n    return results\n\n\n  def __getitem__(self, key):\n    '''\n    Returns the stored value of the specified attribute or child\n    (if it exists).\n    '''\n    if isinstance(key, int):\n      # Children are accessed using integers\n      try:\n        return object.__getattribute__(self, 'children')[key]\n      except IndexError:\n        raise IndexError('Child with index \"%s\" does not exist.' % key)\n    elif isinstance(key, basestring):\n      # Attributes are accessed using strings\n      try:\n        return object.__getattribute__(self, 'attributes')[key]\n      except KeyError:\n        raise AttributeError('Attribute \"%s\" does not exist.' % key)\n    else:\n      raise TypeError('Only integer and string types are valid for accessing '\n          'child tags and attributes, respectively.')\n  __getattr__ = __getitem__\n\n\n  def __len__(self):\n    '''\n    Number of child elements.\n    '''\n    return len(self.children)\n\n\n  def __bool__(self):\n    '''\n    Hack for \"if x\" and __len__\n    '''\n    return True\n  __nonzero__ = __bool__\n\n\n  def __iter__(self):\n    '''\n    Iterates over child elements.\n    '''\n    return self.children.__iter__()\n\n\n  def __contains__(self, item):\n    '''\n    Checks recursively if item is in children tree.\n    Accepts both a string and a class.\n    '''\n    return bool(self.get(item))\n\n\n  def __iadd__(self, obj):\n    '''\n    Reflexive binary addition simply adds tag as a child.\n    '''\n    self.add(obj)\n    return self\n\n  # String and unicode representations are the same as render()\n  def __unicode__(self):\n    return self.render()\n  __str__ = __unicode__\n\n\n  def render(self, indent='  ', pretty=True, xhtml=False):\n    data = self._render([], 0, indent, pretty, xhtml)\n    return u''.join(data)\n\n\n  def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n    pretty = pretty and self.is_pretty\n\n    name = getattr(self, 'tagname', type(self).__name__)\n\n    # Workaround for python keywords and standard classes/methods\n    # (del, object, input)\n    if name[-1] == '_':\n      name = name[:-1]\n\n    # open tag\n    sb.append('<')\n    sb.append(name)\n\n    for attribute, value in sorted(self.attributes.items()):\n      if value in (False, None):\n        continue\n      val = unicode(value) if isinstance(value, util.text) and not value.escape else util.escape(unicode(value), True)\n      sb.append(' %s=\"%s\"' % (attribute, val))\n\n    sb.append(' />' if self.is_single and xhtml else '>')\n\n    if self.is_single:\n      return sb\n\n    inline = self._render_children(sb, indent_level + 1, indent_str, pretty, xhtml)\n    if pretty and not inline:\n      sb.append('\\n')\n      sb.append(indent_str * indent_level)\n\n    # close tag\n    sb.append('</')\n    sb.append(name)\n    sb.append('>')\n\n    return sb\n\n  def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n    inline = True\n    for child in self.children:\n      if isinstance(child, dom_tag):\n        if pretty and not child.is_inline:\n          inline = False\n          sb.append('\\n')\n          sb.append(indent_str * indent_level)\n        child._render(sb, indent_level, indent_str, pretty, xhtml)\n      else:\n        sb.append(unicode(child))\n\n    return inline\n\n\n  def __repr__(self):\n    name = '%s.%s' % (self.__module__, type(self).__name__)\n\n    attributes_len = len(self.attributes)\n    attributes = '%s attribute' % attributes_len\n    if attributes_len != 1: attributes += 's'\n\n    children_len = len(self.children)\n    children = '%s child' % children_len\n    if children_len != 1: children += 'ren'\n\n    return '<%s at %x: %s, %s>' % (name, id(self), attributes, children)\n\n\n  @staticmethod\n  def clean_attribute(attribute):\n    '''\n    Normalize attribute names for shorthand and work arounds for limitations\n    in Python's syntax\n    '''\n\n    # Shorthand\n    attribute = {\n      'cls': 'class',\n      'className': 'class',\n      'class_name': 'class',\n      'klass': 'class',\n      'fr': 'for',\n      'html_for': 'for',\n      'htmlFor': 'for',\n      'phor': 'for',\n    }.get(attribute, attribute)\n\n    # Workaround for Python's reserved words\n    if attribute[0] == '_':\n      attribute = attribute[1:]\n\n    # Workaround for dash\n    special_prefix = any([attribute.startswith(x) for x in ('data_', 'aria_')])\n    if attribute in set(['http_equiv']) or special_prefix:\n      attribute = attribute.replace('_', '-').lower()\n\n    # Workaround for colon\n    if attribute.split('_')[0] in ('xlink', 'xml', 'xmlns'):\n      attribute = attribute.replace('_', ':', 1).lower()\n\n    return attribute\n\n\n  @classmethod\n  def clean_pair(cls, attribute, value):\n    '''\n    This will call `clean_attribute` on the attribute and also allows for the\n    creation of boolean attributes.\n\n    Ex. input(selected=True) is equivalent to input(selected=\"selected\")\n    '''\n    attribute = cls.clean_attribute(attribute)\n\n    # Check for boolean attributes\n    # (i.e. selected=True becomes selected=\"selected\")\n    if value is True:\n      value = attribute\n\n    # Ignore `if value is False`: this is filtered out in render()\n\n    return (attribute, value)",
+        "strategy": "func_pm_class_rm_base",
+        "instance_id": "Knio__dominate.9082227e.func_pm_class_rm_base__fzxf3igl",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -79,7 +79,7 @@\n     pass\n   return tuple(context)\n \n-class dom_tag(object):\n+class dom_tag():\n   is_single = False  # Tag does not require matching end tag (ex. <hr/>)\n   is_pretty = True   # Text inside the tag should be left as-is (ex. <pre>)\n                      # otherwise, text will be escaped() and whitespace may be\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The operands in an expression are likely in the wrong order.",
+        "output": "",
+        "rewrite": "def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n    inline = True\n    for child in self.children:\n      if isinstance(child, dom_tag):\n        if pretty and not child.is_inline:\n          inline = False\n          sb.append('\\n')\n          sb.append(indent_level * indent_str)\n        child._render(sb, indent_level, indent_str, pretty, xhtml)\n      else:\n        sb.append(unicode(child))\n\n    return inline",
+        "strategy": "func_pm_op_swap",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_swap__vbjn2ipn",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -392,14 +392,14 @@\n \n     return sb\n \n-  def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n+def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n     inline = True\n     for child in self.children:\n       if isinstance(child, dom_tag):\n         if pretty and not child.is_inline:\n           inline = False\n           sb.append('\\n')\n-          sb.append(indent_str * indent_level)\n+          sb.append(indent_level * indent_str)\n         child._render(sb, indent_level, indent_str, pretty, xhtml)\n       else:\n         sb.append(unicode(child))\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The lines inside a function may be out of order.",
+        "output": "",
+        "rewrite": "def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n    for child in self.children:\n      if isinstance(child, dom_tag):\n        if pretty and not child.is_inline:\n          inline = False\n          sb.append('\\n')\n          sb.append(indent_str * indent_level)\n        child._render(sb, indent_level, indent_str, pretty, xhtml)\n      else:\n        sb.append(unicode(child))\n\n    return inline\n    inline = True",
+        "strategy": "func_pm_ctrl_shuffle",
+        "instance_id": "Knio__dominate.9082227e.func_pm_ctrl_shuffle__fa66a433",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -392,8 +392,7 @@\n \n     return sb\n \n-  def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n-    inline = True\n+def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n     for child in self.children:\n       if isinstance(child, dom_tag):\n         if pretty and not child.is_inline:\n@@ -405,6 +404,7 @@\n         sb.append(unicode(child))\n \n     return inline\n+    inline = True\n \n \n   def __repr__(self):\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is likely a missing assignment in the code.",
+        "output": "",
+        "rewrite": "def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n    for child in self.children:\n      if isinstance(child, dom_tag):\n        if pretty and not child.is_inline:\n          inline = False\n          sb.append('\\n')\n          sb.append(indent_str * indent_level)\n        child._render(sb, indent_level, indent_str, pretty, xhtml)\n      else:\n        sb.append(unicode(child))\n\n    return inline",
+        "strategy": "func_pm_remove_assign",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_assign__vi6o5h9i",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -392,8 +392,7 @@\n \n     return sb\n \n-  def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n-    inline = True\n+def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n     for child in self.children:\n       if isinstance(child, dom_tag):\n         if pretty and not child.is_inline:\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing loops that is causing the bug.",
+        "output": "",
+        "rewrite": "def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n    inline = True\n\n    return inline",
+        "strategy": "func_pm_remove_loop",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_loop__ub48qryg",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -392,17 +392,8 @@\n \n     return sb\n \n-  def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n+def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n     inline = True\n-    for child in self.children:\n-      if isinstance(child, dom_tag):\n-        if pretty and not child.is_inline:\n-          inline = False\n-          sb.append('\\n')\n-          sb.append(indent_str * indent_level)\n-        child._render(sb, indent_level, indent_str, pretty, xhtml)\n-      else:\n-        sb.append(unicode(child))\n \n     return inline\n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The operations in an expression are likely incorrect.",
+        "output": "",
+        "rewrite": "def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n    inline = True\n    for child in self.children:\n      if isinstance(child, dom_tag):\n        if pretty and not child.is_inline:\n          inline = False\n          sb.append('\\n')\n          sb.append(indent_str / indent_level)\n        child._render(sb, indent_level, indent_str, pretty, xhtml)\n      else:\n        sb.append(unicode(child))\n\n    return inline",
+        "strategy": "func_pm_op_change",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_change__fbgado4f",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -392,14 +392,14 @@\n \n     return sb\n \n-  def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n+def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n     inline = True\n     for child in self.children:\n       if isinstance(child, dom_tag):\n         if pretty and not child.is_inline:\n           inline = False\n           sb.append('\\n')\n-          sb.append(indent_str * indent_level)\n+          sb.append(indent_str / indent_level)\n         child._render(sb, indent_level, indent_str, pretty, xhtml)\n       else:\n         sb.append(unicode(child))\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing conditionals that causes the bug.",
+        "output": "",
+        "rewrite": "def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n    inline = True\n    for child in self.children:\n      pass\n\n    return inline",
+        "strategy": "func_pm_remove_cond",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__ojsncdpa",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -392,17 +392,10 @@\n \n     return sb\n \n-  def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n+def _render_children(self, sb, indent_level, indent_str, pretty, xhtml):\n     inline = True\n     for child in self.children:\n-      if isinstance(child, dom_tag):\n-        if pretty and not child.is_inline:\n-          inline = False\n-          sb.append('\\n')\n-          sb.append(indent_str * indent_level)\n-        child._render(sb, indent_level, indent_str, pretty, xhtml)\n-      else:\n-        sb.append(unicode(child))\n+      pass\n \n     return inline\n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is likely a missing assignment in the code.",
+        "output": "",
+        "rewrite": "def set_attribute(self, key, value):\n    '''\n    Add or update the value of an attribute.\n    '''\n    if isinstance(key, int):\n      pass\n    elif isinstance(key, basestring):\n      self.attributes[key] = value\n    else:\n      raise TypeError('Only integer and string types are valid for assigning '\n          'child tags and attributes, respectively.')",
+        "strategy": "func_pm_remove_assign",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_assign__t93fjl2o",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -183,12 +183,12 @@\n     return f\n \n \n-  def set_attribute(self, key, value):\n+def set_attribute(self, key, value):\n     '''\n     Add or update the value of an attribute.\n     '''\n     if isinstance(key, int):\n-      self.children[key] = value\n+      pass\n     elif isinstance(key, basestring):\n       self.attributes[key] = value\n     else:\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing conditionals that causes the bug.",
+        "output": "",
+        "rewrite": "def set_attribute(self, key, value):\n    '''\n    Add or update the value of an attribute.\n    '''\n    if isinstance(key, int):\n      self.children[key] = value",
+        "strategy": "func_pm_remove_cond",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__hh15cvq4",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -183,17 +183,12 @@\n     return f\n \n \n-  def set_attribute(self, key, value):\n+def set_attribute(self, key, value):\n     '''\n     Add or update the value of an attribute.\n     '''\n     if isinstance(key, int):\n       self.children[key] = value\n-    elif isinstance(key, basestring):\n-      self.attributes[key] = value\n-    else:\n-      raise TypeError('Only integer and string types are valid for assigning '\n-          'child tags and attributes, respectively.')\n   __setitem__ = set_attribute\n \n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing conditionals that causes the bug.",
+        "output": "",
+        "rewrite": "def clean_pair(cls, attribute, value):\n    '''\n    This will call `clean_attribute` on the attribute and also allows for the\n    creation of boolean attributes.\n\n    Ex. input(selected=True) is equivalent to input(selected=\"selected\")\n    '''\n    attribute = cls.clean_attribute(attribute)\n\n    # Ignore `if value is False`: this is filtered out in render()\n\n    return (attribute, value)",
+        "strategy": "func_pm_remove_cond",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__r75jlo6o",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -457,7 +457,7 @@\n \n \n   @classmethod\n-  def clean_pair(cls, attribute, value):\n+def clean_pair(cls, attribute, value):\n     '''\n     This will call `clean_attribute` on the attribute and also allows for the\n     creation of boolean attributes.\n@@ -465,11 +465,6 @@\n     Ex. input(selected=True) is equivalent to input(selected=\"selected\")\n     '''\n     attribute = cls.clean_attribute(attribute)\n-\n-    # Check for boolean attributes\n-    # (i.e. selected=True becomes selected=\"selected\")\n-    if value is True:\n-      value = attribute\n \n     # Ignore `if value is False`: this is filtered out in render()\n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is likely a missing assignment in the code.",
+        "output": "",
+        "rewrite": "def clean_pair(cls, attribute, value):\n    '''\n    This will call `clean_attribute` on the attribute and also allows for the\n    creation of boolean attributes.\n\n    Ex. input(selected=True) is equivalent to input(selected=\"selected\")\n    '''\n    attribute = cls.clean_attribute(attribute)\n\n    # Check for boolean attributes\n    # (i.e. selected=True becomes selected=\"selected\")\n    if value is True:\n      pass\n\n    # Ignore `if value is False`: this is filtered out in render()\n\n    return (attribute, value)",
+        "strategy": "func_pm_remove_assign",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_assign__bablqjdq",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -457,7 +457,7 @@\n \n \n   @classmethod\n-  def clean_pair(cls, attribute, value):\n+def clean_pair(cls, attribute, value):\n     '''\n     This will call `clean_attribute` on the attribute and also allows for the\n     creation of boolean attributes.\n@@ -469,7 +469,7 @@\n     # Check for boolean attributes\n     # (i.e. selected=True becomes selected=\"selected\")\n     if value is True:\n-      value = attribute\n+      pass\n \n     # Ignore `if value is False`: this is filtered out in render()\n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing conditionals that causes the bug.",
+        "output": "",
+        "rewrite": "def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n    pretty = pretty and self.is_pretty\n\n    name = getattr(self, 'tagname', type(self).__name__)\n\n    # Workaround for python keywords and standard classes/methods\n    # (del, object, input)\n    if name[-1] == '_':\n      name = name[:-1]\n\n    # open tag\n    sb.append('<')\n    sb.append(name)\n\n    for attribute, value in sorted(self.attributes.items()):\n      val = unicode(value) if isinstance(value, util.text) and not value.escape else util.escape(unicode(value), True)\n      sb.append(' %s=\"%s\"' % (attribute, val))\n\n    sb.append(' />' if self.is_single and xhtml else '>')\n\n    if self.is_single:\n      return sb\n\n    inline = self._render_children(sb, indent_level + 1, indent_str, pretty, xhtml)\n    if pretty and not inline:\n      sb.append('\\n')\n      sb.append(indent_str * indent_level)\n\n    # close tag\n    sb.append('</')\n    sb.append(name)\n    sb.append('>')\n\n    return sb",
+        "strategy": "func_pm_remove_cond",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__ahqdextn",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -355,7 +355,7 @@\n     return u''.join(data)\n \n \n-  def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n+def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n     pretty = pretty and self.is_pretty\n \n     name = getattr(self, 'tagname', type(self).__name__)\n@@ -370,8 +370,6 @@\n     sb.append(name)\n \n     for attribute, value in sorted(self.attributes.items()):\n-      if value in (False, None):\n-        continue\n       val = unicode(value) if isinstance(value, util.text) and not value.escape else util.escape(unicode(value), True)\n       sb.append(' %s=\"%s\"' % (attribute, val))\n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The operands in an expression are likely in the wrong order.",
+        "output": "",
+        "rewrite": "def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n    pretty = pretty and self.is_pretty\n\n    name = getattr(self, 'tagname', type(self).__name__)\n\n    # Workaround for python keywords and standard classes/methods\n    # (del, object, input)\n    if name[-1] == '_':\n      name = name[:-1]\n\n    # open tag\n    sb.append('<')\n    sb.append(name)\n\n    for attribute, value in sorted(self.attributes.items()):\n      if value in (False, None):\n        continue\n      val = unicode(value) if isinstance(value, util.text) and not value.escape else util.escape(unicode(value), True)\n      sb.append((attribute, val) % ' %s=\"%s\"')\n\n    sb.append(' />' if self.is_single and xhtml else '>')\n\n    if self.is_single:\n      return sb\n\n    inline = self._render_children(sb, 1 + indent_level, indent_str, pretty, xhtml)\n    if pretty and not inline:\n      sb.append('\\n')\n      sb.append(indent_str * indent_level)\n\n    # close tag\n    sb.append('</')\n    sb.append(name)\n    sb.append('>')\n\n    return sb",
+        "strategy": "func_pm_op_swap",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_swap__y9um96mb",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -355,7 +355,7 @@\n     return u''.join(data)\n \n \n-  def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n+def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n     pretty = pretty and self.is_pretty\n \n     name = getattr(self, 'tagname', type(self).__name__)\n@@ -373,14 +373,14 @@\n       if value in (False, None):\n         continue\n       val = unicode(value) if isinstance(value, util.text) and not value.escape else util.escape(unicode(value), True)\n-      sb.append(' %s=\"%s\"' % (attribute, val))\n+      sb.append((attribute, val) % ' %s=\"%s\"')\n \n     sb.append(' />' if self.is_single and xhtml else '>')\n \n     if self.is_single:\n       return sb\n \n-    inline = self._render_children(sb, indent_level + 1, indent_str, pretty, xhtml)\n+    inline = self._render_children(sb, 1 + indent_level, indent_str, pretty, xhtml)\n     if pretty and not inline:\n       sb.append('\\n')\n       sb.append(indent_str * indent_level)\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The operations in an expression are likely incorrect.",
+        "output": "",
+        "rewrite": "def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n    pretty = pretty and self.is_pretty\n\n    name = getattr(self, 'tagname', type(self).__name__)\n\n    # Workaround for python keywords and standard classes/methods\n    # (del, object, input)\n    if name[-1] == '_':\n      name = name[:-1]\n\n    # open tag\n    sb.append('<')\n    sb.append(name)\n\n    for attribute, value in sorted(self.attributes.items()):\n      if value in (False, None):\n        continue\n      val = unicode(value) if isinstance(value, util.text) and not value.escape else util.escape(unicode(value), True)\n      sb.append(' %s=\"%s\"' * (attribute, val))\n\n    sb.append(' />' if self.is_single and xhtml else '>')\n\n    if self.is_single:\n      return sb\n\n    inline = self._render_children(sb, indent_level + 1, indent_str, pretty, xhtml)\n    if pretty and not inline:\n      sb.append('\\n')\n      sb.append(indent_str * indent_level)\n\n    # close tag\n    sb.append('</')\n    sb.append(name)\n    sb.append('>')\n\n    return sb",
+        "strategy": "func_pm_op_change",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_change__08wi0ndx",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -355,7 +355,7 @@\n     return u''.join(data)\n \n \n-  def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n+def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n     pretty = pretty and self.is_pretty\n \n     name = getattr(self, 'tagname', type(self).__name__)\n@@ -373,7 +373,7 @@\n       if value in (False, None):\n         continue\n       val = unicode(value) if isinstance(value, util.text) and not value.escape else util.escape(unicode(value), True)\n-      sb.append(' %s=\"%s\"' % (attribute, val))\n+      sb.append(' %s=\"%s\"' * (attribute, val))\n \n     sb.append(' />' if self.is_single and xhtml else '>')\n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is likely a missing assignment in the code.",
+        "output": "",
+        "rewrite": "def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n    pretty = pretty and self.is_pretty\n\n    name = getattr(self, 'tagname', type(self).__name__)\n\n    # Workaround for python keywords and standard classes/methods\n    # (del, object, input)\n    if name[-1] == '_':\n      pass\n\n    # open tag\n    sb.append('<')\n    sb.append(name)\n\n    for attribute, value in sorted(self.attributes.items()):\n      if value in (False, None):\n        continue\n      sb.append(' %s=\"%s\"' % (attribute, val))\n\n    sb.append(' />' if self.is_single and xhtml else '>')\n\n    if self.is_single:\n      return sb\n\n    inline = self._render_children(sb, indent_level + 1, indent_str, pretty, xhtml)\n    if pretty and not inline:\n      sb.append('\\n')\n      sb.append(indent_str * indent_level)\n\n    # close tag\n    sb.append('</')\n    sb.append(name)\n    sb.append('>')\n\n    return sb",
+        "strategy": "func_pm_remove_assign",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_assign__yb7dtqto",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -355,7 +355,7 @@\n     return u''.join(data)\n \n \n-  def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n+def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n     pretty = pretty and self.is_pretty\n \n     name = getattr(self, 'tagname', type(self).__name__)\n@@ -363,7 +363,7 @@\n     # Workaround for python keywords and standard classes/methods\n     # (del, object, input)\n     if name[-1] == '_':\n-      name = name[:-1]\n+      pass\n \n     # open tag\n     sb.append('<')\n@@ -372,7 +372,6 @@\n     for attribute, value in sorted(self.attributes.items()):\n       if value in (False, None):\n         continue\n-      val = unicode(value) if isinstance(value, util.text) and not value.escape else util.escape(unicode(value), True)\n       sb.append(' %s=\"%s\"' % (attribute, val))\n \n     sb.append(' />' if self.is_single and xhtml else '>')\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The constants in an expression might be incorrect.",
+        "output": "",
+        "rewrite": "def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n    pretty = pretty and self.is_pretty\n\n    name = getattr(self, 'tagname', type(self).__name__)\n\n    # Workaround for python keywords and standard classes/methods\n    # (del, object, input)\n    if name[-1] == '_':\n      name = name[:-1]\n\n    # open tag\n    sb.append('<')\n    sb.append(name)\n\n    for attribute, value in sorted(self.attributes.items()):\n      if value in (False, None):\n        continue\n      val = unicode(value) if isinstance(value, util.text) and not value.escape else util.escape(unicode(value), True)\n      sb.append(' %s=\"%s\"' % (attribute, val))\n\n    sb.append(' />' if self.is_single and xhtml else '>')\n\n    if self.is_single:\n      return sb\n\n    inline = self._render_children(sb, indent_level + 2, indent_str, pretty, xhtml)\n    if pretty and not inline:\n      sb.append('\\n')\n      sb.append(indent_str * indent_level)\n\n    # close tag\n    sb.append('</')\n    sb.append(name)\n    sb.append('>')\n\n    return sb",
+        "strategy": "func_pm_op_change_const",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_change_const__ssng7fy1",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -355,7 +355,7 @@\n     return u''.join(data)\n \n \n-  def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n+def _render(self, sb, indent_level, indent_str, pretty, xhtml):\n     pretty = pretty and self.is_pretty\n \n     name = getattr(self, 'tagname', type(self).__name__)\n@@ -380,7 +380,7 @@\n     if self.is_single:\n       return sb\n \n-    inline = self._render_children(sb, indent_level + 1, indent_str, pretty, xhtml)\n+    inline = self._render_children(sb, indent_level + 2, indent_str, pretty, xhtml)\n     if pretty and not inline:\n       sb.append('\\n')\n       sb.append(indent_str * indent_level)\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is likely a missing assignment in the code.",
+        "output": "",
+        "rewrite": "def _get_thread_context():\n  # Tag extra content information with a name to make sure\n  # a greenlet.getcurrent() == 1 doesn't get confused with a\n  # a _get_thread_context() == 1.\n  if greenlet:\n    context.append((\"greenlet\", greenlet.getcurrent()))\n\n  try:\n    if get_event_loop().is_running():\n      # Only add this extra information if we are actually in a running event loop\n      context.append((\"async\", _get_async_context_id()))\n  # A runtime error is raised if there is no async loop...\n  except RuntimeError:\n    pass\n  return tuple(context)",
+        "strategy": "func_pm_remove_assign",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_assign__c0ryl5ti",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -63,7 +63,6 @@\n   return async_context_id.get()\n \n def _get_thread_context():\n-  context = [threading.current_thread()]\n   # Tag extra content information with a name to make sure\n   # a greenlet.getcurrent() == 1 doesn't get confused with a\n   # a _get_thread_context() == 1.\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing conditionals that causes the bug.",
+        "output": "",
+        "rewrite": "def _get_thread_context():\n  context = [threading.current_thread()]\n  # Tag extra content information with a name to make sure\n  # a greenlet.getcurrent() == 1 doesn't get confused with a\n  # a _get_thread_context() == 1.\n  if greenlet:\n    context.append((\"greenlet\", greenlet.getcurrent()))\n\n  try:\n    pass\n  # A runtime error is raised if there is no async loop...\n  except RuntimeError:\n    pass\n  return tuple(context)",
+        "strategy": "func_pm_remove_cond",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__ao1i25wx",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -71,9 +71,7 @@\n     context.append((\"greenlet\", greenlet.getcurrent()))\n \n   try:\n-    if get_event_loop().is_running():\n-      # Only add this extra information if we are actually in a running event loop\n-      context.append((\"async\", _get_async_context_id()))\n+    pass\n   # A runtime error is raised if there is no async loop...\n   except RuntimeError:\n     pass\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is likely a missing assignment in the code.",
+        "output": "",
+        "rewrite": "def __init__(self, *args, **kwargs):\n    '''\n    Creates a new tag. Child tags should be passed as arguments and attributes\n    should be passed as keyword arguments.\n\n    There is a non-rendering attribute which controls how the tag renders:\n\n    * `__inline` - Boolean value. If True renders all children tags on the same\n                   line.\n    '''\n\n    self.attributes = {}\n    self.parent     = None\n    self.is_pretty = kwargs.pop('__pretty', self.is_pretty)\n\n    #Add child elements\n    if args:\n      self.add(*args)\n\n    for attr, value in kwargs.items():\n      self.set_attribute(*type(self).clean_pair(attr, value))\n    self._add_to_ctx()",
+        "strategy": "func_pm_remove_assign",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_assign__75rrsqwi",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -105,7 +105,7 @@\n     return object.__new__(_cls)\n \n \n-  def __init__(self, *args, **kwargs):\n+def __init__(self, *args, **kwargs):\n     '''\n     Creates a new tag. Child tags should be passed as arguments and attributes\n     should be passed as keyword arguments.\n@@ -117,11 +117,7 @@\n     '''\n \n     self.attributes = {}\n-    self.children   = []\n     self.parent     = None\n-\n-    # Does not insert newlines on all children if True (recursive attribute)\n-    self.is_inline = kwargs.pop('__inline', self.is_inline)\n     self.is_pretty = kwargs.pop('__pretty', self.is_pretty)\n \n     #Add child elements\n@@ -130,8 +126,6 @@\n \n     for attr, value in kwargs.items():\n       self.set_attribute(*type(self).clean_pair(attr, value))\n-\n-    self._ctx = None\n     self._add_to_ctx()\n \n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing loops that is causing the bug.",
+        "output": "",
+        "rewrite": "def __init__(self, *args, **kwargs):\n    '''\n    Creates a new tag. Child tags should be passed as arguments and attributes\n    should be passed as keyword arguments.\n\n    There is a non-rendering attribute which controls how the tag renders:\n\n    * `__inline` - Boolean value. If True renders all children tags on the same\n                   line.\n    '''\n\n    self.attributes = {}\n    self.children   = []\n    self.parent     = None\n\n    # Does not insert newlines on all children if True (recursive attribute)\n    self.is_inline = kwargs.pop('__inline', self.is_inline)\n    self.is_pretty = kwargs.pop('__pretty', self.is_pretty)\n\n    #Add child elements\n    if args:\n      self.add(*args)\n\n    self._ctx = None\n    self._add_to_ctx()",
+        "strategy": "func_pm_remove_loop",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_loop__jpo0ye2h",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -105,7 +105,7 @@\n     return object.__new__(_cls)\n \n \n-  def __init__(self, *args, **kwargs):\n+def __init__(self, *args, **kwargs):\n     '''\n     Creates a new tag. Child tags should be passed as arguments and attributes\n     should be passed as keyword arguments.\n@@ -127,9 +127,6 @@\n     #Add child elements\n     if args:\n       self.add(*args)\n-\n-    for attr, value in kwargs.items():\n-      self.set_attribute(*type(self).clean_pair(attr, value))\n \n     self._ctx = None\n     self._add_to_ctx()\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The lines inside a function may be out of order.",
+        "output": "",
+        "rewrite": "def __init__(self, *args, **kwargs):\n    self._add_to_ctx()\n    self.is_pretty = kwargs.pop('__pretty', self.is_pretty)\n    self.children   = []\n\n    #Add child elements\n    if args:\n      self.add(*args)\n    self.parent     = None\n\n    self._ctx = None\n\n    # Does not insert newlines on all children if True (recursive attribute)\n    self.is_inline = kwargs.pop('__inline', self.is_inline)\n    '''\n    Creates a new tag. Child tags should be passed as arguments and attributes\n    should be passed as keyword arguments.\n\n    There is a non-rendering attribute which controls how the tag renders:\n\n    * `__inline` - Boolean value. If True renders all children tags on the same\n                   line.\n    '''\n\n    self.attributes = {}\n\n    for attr, value in kwargs.items():\n      self.set_attribute(*type(self).clean_pair(attr, value))",
+        "strategy": "func_pm_ctrl_shuffle",
+        "instance_id": "Knio__dominate.9082227e.func_pm_ctrl_shuffle__9h2l69qp",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -105,34 +105,34 @@\n     return object.__new__(_cls)\n \n \n-  def __init__(self, *args, **kwargs):\n-    '''\n-    Creates a new tag. Child tags should be passed as arguments and attributes\n-    should be passed as keyword arguments.\n-\n-    There is a non-rendering attribute which controls how the tag renders:\n-\n-    * `__inline` - Boolean value. If True renders all children tags on the same\n-                   line.\n-    '''\n-\n-    self.attributes = {}\n+def __init__(self, *args, **kwargs):\n+    self._add_to_ctx()\n+    self.is_pretty = kwargs.pop('__pretty', self.is_pretty)\n     self.children   = []\n-    self.parent     = None\n-\n-    # Does not insert newlines on all children if True (recursive attribute)\n-    self.is_inline = kwargs.pop('__inline', self.is_inline)\n-    self.is_pretty = kwargs.pop('__pretty', self.is_pretty)\n \n     #Add child elements\n     if args:\n       self.add(*args)\n+    self.parent     = None\n+\n+    self._ctx = None\n+\n+    # Does not insert newlines on all children if True (recursive attribute)\n+    self.is_inline = kwargs.pop('__inline', self.is_inline)\n+    '''\n+    Creates a new tag. Child tags should be passed as arguments and attributes\n+    should be passed as keyword arguments.\n+\n+    There is a non-rendering attribute which controls how the tag renders:\n+\n+    * `__inline` - Boolean value. If True renders all children tags on the same\n+                   line.\n+    '''\n+\n+    self.attributes = {}\n \n     for attr, value in kwargs.items():\n       self.set_attribute(*type(self).clean_pair(attr, value))\n-\n-    self._ctx = None\n-    self._add_to_ctx()\n \n \n   # context manager\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing loops that is causing the bug.",
+        "output": "",
+        "rewrite": "def attr(*args, **kwargs):\n  '''\n  Set attributes on the current active tag context\n  '''\n  c = get_current()\n  dicts = args + (kwargs,)",
+        "strategy": "func_pm_remove_loop",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_loop__pyi0skrr",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -497,9 +497,6 @@\n   '''\n   c = get_current()\n   dicts = args + (kwargs,)\n-  for d in dicts:\n-    for attr, value in d.items():\n-      c.set_attribute(*dom_tag.clean_pair(attr, value))\n \n \n from . import util\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The operands in an expression are likely in the wrong order.",
+        "output": "",
+        "rewrite": "def attr(*args, **kwargs):\n  '''\n  Set attributes on the current active tag context\n  '''\n  c = get_current()\n  dicts = (kwargs,) + args\n  for d in dicts:\n    for attr, value in d.items():\n      c.set_attribute(*dom_tag.clean_pair(attr, value))",
+        "strategy": "func_pm_op_swap",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_swap__bwjp7qti",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -496,7 +496,7 @@\n   Set attributes on the current active tag context\n   '''\n   c = get_current()\n-  dicts = args + (kwargs,)\n+  dicts = (kwargs,) + args\n   for d in dicts:\n     for attr, value in d.items():\n       c.set_attribute(*dom_tag.clean_pair(attr, value))\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is likely a missing assignment in the code.",
+        "output": "",
+        "rewrite": "def attr(*args, **kwargs):\n  '''\n  Set attributes on the current active tag context\n  '''\n  c = get_current()\n  for d in dicts:\n    for attr, value in d.items():\n      c.set_attribute(*dom_tag.clean_pair(attr, value))",
+        "strategy": "func_pm_remove_assign",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_assign__90tpafat",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -496,7 +496,6 @@\n   Set attributes on the current active tag context\n   '''\n   c = get_current()\n-  dicts = args + (kwargs,)\n   for d in dicts:\n     for attr, value in d.items():\n       c.set_attribute(*dom_tag.clean_pair(attr, value))\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The operations in an expression are likely incorrect.",
+        "output": "",
+        "rewrite": "def attr(*args, **kwargs):\n  '''\n  Set attributes on the current active tag context\n  '''\n  c = get_current()\n  dicts = args - (kwargs,)\n  for d in dicts:\n    for attr, value in d.items():\n      c.set_attribute(*dom_tag.clean_pair(attr, value))",
+        "strategy": "func_pm_op_change",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_change__vx8ps0wc",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -496,7 +496,7 @@\n   Set attributes on the current active tag context\n   '''\n   c = get_current()\n-  dicts = args + (kwargs,)\n+  dicts = args - (kwargs,)\n   for d in dicts:\n     for attr, value in d.items():\n       c.set_attribute(*dom_tag.clean_pair(attr, value))\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing conditionals that causes the bug.",
+        "output": "",
+        "rewrite": "def __getitem__(self, key):\n    '''\n    Returns the stored value of the specified attribute or child\n    (if it exists).\n    '''",
+        "strategy": "func_pm_remove_cond",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__n8ymv7f4",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -284,26 +284,11 @@\n     return results\n \n \n-  def __getitem__(self, key):\n+def __getitem__(self, key):\n     '''\n     Returns the stored value of the specified attribute or child\n     (if it exists).\n     '''\n-    if isinstance(key, int):\n-      # Children are accessed using integers\n-      try:\n-        return object.__getattribute__(self, 'children')[key]\n-      except IndexError:\n-        raise IndexError('Child with index \"%s\" does not exist.' % key)\n-    elif isinstance(key, basestring):\n-      # Attributes are accessed using strings\n-      try:\n-        return object.__getattribute__(self, 'attributes')[key]\n-      except KeyError:\n-        raise AttributeError('Attribute \"%s\" does not exist.' % key)\n-    else:\n-      raise TypeError('Only integer and string types are valid for accessing '\n-          'child tags and attributes, respectively.')\n   __getattr__ = __getitem__\n \n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The operations in an expression are likely incorrect.",
+        "output": "",
+        "rewrite": "def __getitem__(self, key):\n    '''\n    Returns the stored value of the specified attribute or child\n    (if it exists).\n    '''\n    if isinstance(key, int):\n      # Children are accessed using integers\n      try:\n        return object.__getattribute__(self, 'children')[key]\n      except IndexError:\n        raise IndexError('Child with index \"%s\" does not exist.' // key)\n    elif isinstance(key, basestring):\n      # Attributes are accessed using strings\n      try:\n        return object.__getattribute__(self, 'attributes')[key]\n      except KeyError:\n        raise AttributeError('Attribute \"%s\" does not exist.' % key)\n    else:\n      raise TypeError('Only integer and string types are valid for accessing '\n          'child tags and attributes, respectively.')",
+        "strategy": "func_pm_op_change",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_change__48y2jo1y",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -284,7 +284,7 @@\n     return results\n \n \n-  def __getitem__(self, key):\n+def __getitem__(self, key):\n     '''\n     Returns the stored value of the specified attribute or child\n     (if it exists).\n@@ -294,7 +294,7 @@\n       try:\n         return object.__getattribute__(self, 'children')[key]\n       except IndexError:\n-        raise IndexError('Child with index \"%s\" does not exist.' % key)\n+        raise IndexError('Child with index \"%s\" does not exist.' // key)\n     elif isinstance(key, basestring):\n       # Attributes are accessed using strings\n       try:\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There are missing wrappers (with, try blocks) in the code.",
+        "output": "",
+        "rewrite": "def __getitem__(self, key):\n    '''\n    Returns the stored value of the specified attribute or child\n    (if it exists).\n    '''\n    if isinstance(key, int):\n      # Children are accessed using integers\n      try:\n        return object.__getattribute__(self, 'children')[key]\n      except IndexError:\n        raise IndexError('Child with index \"%s\" does not exist.' % key)\n    elif isinstance(key, basestring):\n      pass\n    else:\n      raise TypeError('Only integer and string types are valid for accessing '\n          'child tags and attributes, respectively.')",
+        "strategy": "func_pm_remove_wrapper",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_wrapper__wlvt8lyz",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -284,7 +284,7 @@\n     return results\n \n \n-  def __getitem__(self, key):\n+def __getitem__(self, key):\n     '''\n     Returns the stored value of the specified attribute or child\n     (if it exists).\n@@ -296,11 +296,7 @@\n       except IndexError:\n         raise IndexError('Child with index \"%s\" does not exist.' % key)\n     elif isinstance(key, basestring):\n-      # Attributes are accessed using strings\n-      try:\n-        return object.__getattribute__(self, 'attributes')[key]\n-      except KeyError:\n-        raise AttributeError('Attribute \"%s\" does not exist.' % key)\n+      pass\n     else:\n       raise TypeError('Only integer and string types are valid for accessing '\n           'child tags and attributes, respectively.')\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The operands in an expression are likely in the wrong order.",
+        "output": "",
+        "rewrite": "def __getitem__(self, key):\n    '''\n    Returns the stored value of the specified attribute or child\n    (if it exists).\n    '''\n    if isinstance(key, int):\n      # Children are accessed using integers\n      try:\n        return object.__getattribute__(self, 'children')[key]\n      except IndexError:\n        raise IndexError('Child with index \"%s\" does not exist.' % key)\n    elif isinstance(key, basestring):\n      # Attributes are accessed using strings\n      try:\n        return object.__getattribute__(self, 'attributes')[key]\n      except KeyError:\n        raise AttributeError(key % 'Attribute \"%s\" does not exist.')\n    else:\n      raise TypeError('Only integer and string types are valid for accessing '\n          'child tags and attributes, respectively.')",
+        "strategy": "func_pm_op_swap",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_swap__crswunwl",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -284,7 +284,7 @@\n     return results\n \n \n-  def __getitem__(self, key):\n+def __getitem__(self, key):\n     '''\n     Returns the stored value of the specified attribute or child\n     (if it exists).\n@@ -300,7 +300,7 @@\n       try:\n         return object.__getattribute__(self, 'attributes')[key]\n       except KeyError:\n-        raise AttributeError('Attribute \"%s\" does not exist.' % key)\n+        raise AttributeError(key % 'Attribute \"%s\" does not exist.')\n     else:\n       raise TypeError('Only integer and string types are valid for accessing '\n           'child tags and attributes, respectively.')\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The if-else conditions may be out of order, or the bodies are inverted.",
+        "output": "",
+        "rewrite": "def __getitem__(self, key):\n    '''\n    Returns the stored value of the specified attribute or child\n    (if it exists).\n    '''\n    if isinstance(key, int):\n      # Children are accessed using integers\n      try:\n        return object.__getattribute__(self, 'children')[key]\n      except IndexError:\n        raise IndexError('Child with index \"%s\" does not exist.' % key)\n    elif isinstance(key, basestring):\n      raise TypeError('Only integer and string types are valid for accessing '\n          'child tags and attributes, respectively.')\n    else:\n      # Attributes are accessed using strings\n      try:\n        return object.__getattribute__(self, 'attributes')[key]\n      except KeyError:\n        raise AttributeError('Attribute \"%s\" does not exist.' % key)",
+        "strategy": "func_pm_ctrl_invert_if",
+        "instance_id": "Knio__dominate.9082227e.func_pm_ctrl_invert_if__v87vmhuq",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -284,7 +284,7 @@\n     return results\n \n \n-  def __getitem__(self, key):\n+def __getitem__(self, key):\n     '''\n     Returns the stored value of the specified attribute or child\n     (if it exists).\n@@ -296,14 +296,14 @@\n       except IndexError:\n         raise IndexError('Child with index \"%s\" does not exist.' % key)\n     elif isinstance(key, basestring):\n+      raise TypeError('Only integer and string types are valid for accessing '\n+          'child tags and attributes, respectively.')\n+    else:\n       # Attributes are accessed using strings\n       try:\n         return object.__getattribute__(self, 'attributes')[key]\n       except KeyError:\n         raise AttributeError('Attribute \"%s\" does not exist.' % key)\n-    else:\n-      raise TypeError('Only integer and string types are valid for accessing '\n-          'child tags and attributes, respectively.')\n   __getattr__ = __getitem__\n \n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is likely a missing assignment in the code.",
+        "output": "",
+        "rewrite": "def __exit__(self, type, value, traceback):\n    stack = dom_tag._with_contexts[thread_id]\n    frame = stack.pop()\n    for item in frame.items:\n      if item in frame.used: continue\n      self.add(item)\n    if not stack:\n      del dom_tag._with_contexts[thread_id]",
+        "strategy": "func_pm_remove_assign",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_assign__j3pl8zcg",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -153,8 +153,7 @@\n     return self\n \n \n-  def __exit__(self, type, value, traceback):\n-    thread_id = _get_thread_context()\n+def __exit__(self, type, value, traceback):\n     stack = dom_tag._with_contexts[thread_id]\n     frame = stack.pop()\n     for item in frame.items:\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The lines inside a function may be out of order.",
+        "output": "",
+        "rewrite": "def __exit__(self, type, value, traceback):\n    if not stack:\n      del dom_tag._with_contexts[thread_id]\n    stack = dom_tag._with_contexts[thread_id]\n    for item in frame.items:\n      if item in frame.used: continue\n      self.add(item)\n    thread_id = _get_thread_context()\n    frame = stack.pop()",
+        "strategy": "func_pm_ctrl_shuffle",
+        "instance_id": "Knio__dominate.9082227e.func_pm_ctrl_shuffle__m3wbu09d",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -153,15 +153,15 @@\n     return self\n \n \n-  def __exit__(self, type, value, traceback):\n-    thread_id = _get_thread_context()\n+def __exit__(self, type, value, traceback):\n+    if not stack:\n+      del dom_tag._with_contexts[thread_id]\n     stack = dom_tag._with_contexts[thread_id]\n-    frame = stack.pop()\n     for item in frame.items:\n       if item in frame.used: continue\n       self.add(item)\n-    if not stack:\n-      del dom_tag._with_contexts[thread_id]\n+    thread_id = _get_thread_context()\n+    frame = stack.pop()\n \n \n   def __call__(self, func):\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing loops that is causing the bug.",
+        "output": "",
+        "rewrite": "def __exit__(self, type, value, traceback):\n    thread_id = _get_thread_context()\n    stack = dom_tag._with_contexts[thread_id]\n    frame = stack.pop()\n    if not stack:\n      del dom_tag._with_contexts[thread_id]",
+        "strategy": "func_pm_remove_loop",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_loop__mma4dgiv",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -153,13 +153,10 @@\n     return self\n \n \n-  def __exit__(self, type, value, traceback):\n+def __exit__(self, type, value, traceback):\n     thread_id = _get_thread_context()\n     stack = dom_tag._with_contexts[thread_id]\n     frame = stack.pop()\n-    for item in frame.items:\n-      if item in frame.used: continue\n-      self.add(item)\n     if not stack:\n       del dom_tag._with_contexts[thread_id]\n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing conditionals that causes the bug.",
+        "output": "",
+        "rewrite": "def __exit__(self, type, value, traceback):\n    thread_id = _get_thread_context()\n    stack = dom_tag._with_contexts[thread_id]\n    frame = stack.pop()\n    for item in frame.items:\n      self.add(item)",
+        "strategy": "func_pm_remove_cond",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__zninczye",
+        "patch": "--- a/dominate/dom_tag.py\n+++ b/dominate/dom_tag.py\n@@ -153,15 +153,12 @@\n     return self\n \n \n-  def __exit__(self, type, value, traceback):\n+def __exit__(self, type, value, traceback):\n     thread_id = _get_thread_context()\n     stack = dom_tag._with_contexts[thread_id]\n     frame = stack.pop()\n     for item in frame.items:\n-      if item in frame.used: continue\n       self.add(item)\n-    if not stack:\n-      del dom_tag._with_contexts[thread_id]\n \n \n   def __call__(self, func):\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The base class has been removed from the class definition.",
+        "output": "",
+        "rewrite": "class comment():\n  '''\n  Normal, one-line comment:\n    >>> print comment(\"Hello, comments!\")\n    <!--Hello, comments!-->\n\n  For IE's \"if\" statement comments:\n    >>> print comment(p(\"Upgrade your browser.\"), condition='lt IE6')\n    <!--[if lt IE6]><p>Upgrade your browser.</p><![endif]-->\n\n  Downlevel conditional comments:\n    >>> print comment(p(\"You are using a \", em(\"downlevel\"), \" browser.\"),\n            condition='false', downlevel='revealed')\n    <![if false]><p>You are using a <em>downlevel</em> browser.</p><![endif]>\n\n  For more on conditional comments see:\n    http://msdn.microsoft.com/en-us/library/ms537512(VS.85).aspx\n  '''\n\n  ATTRIBUTE_CONDITION = 'condition'\n\n  # Valid values are 'hidden', 'downlevel' or 'revealed'\n  ATTRIBUTE_DOWNLEVEL = 'downlevel'\n\n  def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n    has_condition = comment.ATTRIBUTE_CONDITION in self.attributes\n    is_revealed   = comment.ATTRIBUTE_DOWNLEVEL in self.attributes and \\\n        self.attributes[comment.ATTRIBUTE_DOWNLEVEL] == 'revealed'\n\n    sb.append('<!')\n    if not is_revealed:\n      sb.append('--')\n    if has_condition:\n      sb.append('[if %s]>' % self.attributes[comment.ATTRIBUTE_CONDITION])\n\n    pretty = self._render_children(sb, indent_level - 1, indent_str, pretty, xhtml)\n\n    # if len(self.children) > 1:\n    if any(isinstance(child, dom_tag) for child in self):\n      sb.append('\\n')\n      sb.append(indent_str * (indent_level - 1))\n\n    if has_condition:\n      sb.append('<![endif]')\n    if not is_revealed:\n      sb.append('--')\n    sb.append('>')\n\n    return sb",
+        "strategy": "func_pm_class_rm_base",
+        "instance_id": "Knio__dominate.9082227e.func_pm_class_rm_base__s21ry2ub",
+        "patch": "--- a/dominate/tags.py\n+++ b/dominate/tags.py\n@@ -1081,7 +1081,7 @@\n \n \n # Additional markup\n-class comment(html_tag):\n+class comment():\n   '''\n   Normal, one-line comment:\n     >>> print comment(\"Hello, comments!\")\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The operations in an expression are likely incorrect.",
+        "output": "",
+        "rewrite": "def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n    has_condition = comment.ATTRIBUTE_CONDITION in self.attributes\n    is_revealed   = comment.ATTRIBUTE_DOWNLEVEL in self.attributes and \\\n        self.attributes[comment.ATTRIBUTE_DOWNLEVEL] == 'revealed'\n\n    sb.append('<!')\n    if not is_revealed:\n      sb.append('--')\n    if has_condition:\n      sb.append('[if %s]>' % self.attributes[comment.ATTRIBUTE_CONDITION])\n\n    pretty = self._render_children(sb, indent_level - 1, indent_str, pretty, xhtml)\n\n    # if len(self.children) > 1:\n    if any(isinstance(child, dom_tag) for child in self):\n      sb.append('\\n')\n      sb.append(indent_str * (indent_level + 1))\n\n    if has_condition:\n      sb.append('<![endif]')\n    if not is_revealed:\n      sb.append('--')\n    sb.append('>')\n\n    return sb",
+        "strategy": "func_pm_op_change",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_change__zifswm2u",
+        "patch": "--- a/dominate/tags.py\n+++ b/dominate/tags.py\n@@ -1105,7 +1105,7 @@\n   # Valid values are 'hidden', 'downlevel' or 'revealed'\n   ATTRIBUTE_DOWNLEVEL = 'downlevel'\n \n-  def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n+def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n     has_condition = comment.ATTRIBUTE_CONDITION in self.attributes\n     is_revealed   = comment.ATTRIBUTE_DOWNLEVEL in self.attributes and \\\n         self.attributes[comment.ATTRIBUTE_DOWNLEVEL] == 'revealed'\n@@ -1121,7 +1121,7 @@\n     # if len(self.children) > 1:\n     if any(isinstance(child, dom_tag) for child in self):\n       sb.append('\\n')\n-      sb.append(indent_str * (indent_level - 1))\n+      sb.append(indent_str * (indent_level + 1))\n \n     if has_condition:\n       sb.append('<![endif]')\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing conditionals that causes the bug.",
+        "output": "",
+        "rewrite": "def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n    has_condition = comment.ATTRIBUTE_CONDITION in self.attributes\n    is_revealed   = comment.ATTRIBUTE_DOWNLEVEL in self.attributes and \\\n        self.attributes[comment.ATTRIBUTE_DOWNLEVEL] == 'revealed'\n\n    sb.append('<!')\n    if not is_revealed:\n      sb.append('--')\n\n    pretty = self._render_children(sb, indent_level - 1, indent_str, pretty, xhtml)\n\n    # if len(self.children) > 1:\n    if any(isinstance(child, dom_tag) for child in self):\n      sb.append('\\n')\n      sb.append(indent_str * (indent_level - 1))\n\n    if has_condition:\n      sb.append('<![endif]')\n    if not is_revealed:\n      sb.append('--')\n    sb.append('>')\n\n    return sb",
+        "strategy": "func_pm_remove_cond",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__oyilorqo",
+        "patch": "--- a/dominate/tags.py\n+++ b/dominate/tags.py\n@@ -1105,7 +1105,7 @@\n   # Valid values are 'hidden', 'downlevel' or 'revealed'\n   ATTRIBUTE_DOWNLEVEL = 'downlevel'\n \n-  def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n+def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n     has_condition = comment.ATTRIBUTE_CONDITION in self.attributes\n     is_revealed   = comment.ATTRIBUTE_DOWNLEVEL in self.attributes and \\\n         self.attributes[comment.ATTRIBUTE_DOWNLEVEL] == 'revealed'\n@@ -1113,8 +1113,6 @@\n     sb.append('<!')\n     if not is_revealed:\n       sb.append('--')\n-    if has_condition:\n-      sb.append('[if %s]>' % self.attributes[comment.ATTRIBUTE_CONDITION])\n \n     pretty = self._render_children(sb, indent_level - 1, indent_str, pretty, xhtml)\n \n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There are expressions or mathematical operations that are likely incomplete.",
+        "output": "",
+        "rewrite": "def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n    has_condition = comment.ATTRIBUTE_CONDITION in self.attributes\n    is_revealed   = comment.ATTRIBUTE_DOWNLEVEL in self.attributes and \\\n        self.attributes[comment.ATTRIBUTE_DOWNLEVEL] == 'revealed'\n\n    sb.append('<!')\n    if not is_revealed:\n      sb.append('--')\n    if has_condition:\n      sb.append('[if %s]>' % self.attributes[comment.ATTRIBUTE_CONDITION])\n\n    pretty = self._render_children(sb, indent_level - 1, indent_str, pretty, xhtml)\n\n    # if len(self.children) > 1:\n    if any(isinstance(child, dom_tag) for child in self):\n      sb.append('\\n')\n      sb.append(indent_str * 1)\n\n    if has_condition:\n      sb.append('<![endif]')\n    if not is_revealed:\n      sb.append('--')\n    sb.append('>')\n\n    return sb",
+        "strategy": "func_pm_op_break_chains",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_break_chains__d0njoco9",
+        "patch": "--- a/dominate/tags.py\n+++ b/dominate/tags.py\n@@ -1105,7 +1105,7 @@\n   # Valid values are 'hidden', 'downlevel' or 'revealed'\n   ATTRIBUTE_DOWNLEVEL = 'downlevel'\n \n-  def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n+def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n     has_condition = comment.ATTRIBUTE_CONDITION in self.attributes\n     is_revealed   = comment.ATTRIBUTE_DOWNLEVEL in self.attributes and \\\n         self.attributes[comment.ATTRIBUTE_DOWNLEVEL] == 'revealed'\n@@ -1121,7 +1121,7 @@\n     # if len(self.children) > 1:\n     if any(isinstance(child, dom_tag) for child in self):\n       sb.append('\\n')\n-      sb.append(indent_str * (indent_level - 1))\n+      sb.append(indent_str * 1)\n \n     if has_condition:\n       sb.append('<![endif]')\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The constants in an expression might be incorrect.",
+        "output": "",
+        "rewrite": "def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n    has_condition = comment.ATTRIBUTE_CONDITION in self.attributes\n    is_revealed   = comment.ATTRIBUTE_DOWNLEVEL in self.attributes and \\\n        self.attributes[comment.ATTRIBUTE_DOWNLEVEL] == 'revealed'\n\n    sb.append('<!')\n    if not is_revealed:\n      sb.append('--')\n    if has_condition:\n      sb.append('[if %s]>' % self.attributes[comment.ATTRIBUTE_CONDITION])\n\n    pretty = self._render_children(sb, indent_level - 1, indent_str, pretty, xhtml)\n\n    # if len(self.children) > 1:\n    if any(isinstance(child, dom_tag) for child in self):\n      sb.append('\\n')\n      sb.append(indent_str * (indent_level - 0))\n\n    if has_condition:\n      sb.append('<![endif]')\n    if not is_revealed:\n      sb.append('--')\n    sb.append('>')\n\n    return sb",
+        "strategy": "func_pm_op_change_const",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_change_const__4vh0v498",
+        "patch": "--- a/dominate/tags.py\n+++ b/dominate/tags.py\n@@ -1105,7 +1105,7 @@\n   # Valid values are 'hidden', 'downlevel' or 'revealed'\n   ATTRIBUTE_DOWNLEVEL = 'downlevel'\n \n-  def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n+def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n     has_condition = comment.ATTRIBUTE_CONDITION in self.attributes\n     is_revealed   = comment.ATTRIBUTE_DOWNLEVEL in self.attributes and \\\n         self.attributes[comment.ATTRIBUTE_DOWNLEVEL] == 'revealed'\n@@ -1121,7 +1121,7 @@\n     # if len(self.children) > 1:\n     if any(isinstance(child, dom_tag) for child in self):\n       sb.append('\\n')\n-      sb.append(indent_str * (indent_level - 1))\n+      sb.append(indent_str * (indent_level - 0))\n \n     if has_condition:\n       sb.append('<![endif]')\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "The operands in an expression are likely in the wrong order.",
+        "output": "",
+        "rewrite": "def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n    has_condition = comment.ATTRIBUTE_CONDITION in self.attributes\n    is_revealed   = comment.ATTRIBUTE_DOWNLEVEL in self.attributes and \\\n        self.attributes[comment.ATTRIBUTE_DOWNLEVEL] == 'revealed'\n\n    sb.append('<!')\n    if not is_revealed:\n      sb.append('--')\n    if has_condition:\n      sb.append(self.attributes[comment.ATTRIBUTE_CONDITION] % '[if %s]>')\n\n    pretty = self._render_children(sb, indent_level - 1, indent_str, pretty, xhtml)\n\n    # if len(self.children) > 1:\n    if any(isinstance(child, dom_tag) for child in self):\n      sb.append('\\n')\n      sb.append(indent_str * (1 - indent_level))\n\n    if has_condition:\n      sb.append('<![endif]')\n    if not is_revealed:\n      sb.append('--')\n    sb.append('>')\n\n    return sb",
+        "strategy": "func_pm_op_swap",
+        "instance_id": "Knio__dominate.9082227e.func_pm_op_swap__lom9pt63",
+        "patch": "--- a/dominate/tags.py\n+++ b/dominate/tags.py\n@@ -1105,7 +1105,7 @@\n   # Valid values are 'hidden', 'downlevel' or 'revealed'\n   ATTRIBUTE_DOWNLEVEL = 'downlevel'\n \n-  def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n+def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n     has_condition = comment.ATTRIBUTE_CONDITION in self.attributes\n     is_revealed   = comment.ATTRIBUTE_DOWNLEVEL in self.attributes and \\\n         self.attributes[comment.ATTRIBUTE_DOWNLEVEL] == 'revealed'\n@@ -1114,14 +1114,14 @@\n     if not is_revealed:\n       sb.append('--')\n     if has_condition:\n-      sb.append('[if %s]>' % self.attributes[comment.ATTRIBUTE_CONDITION])\n+      sb.append(self.attributes[comment.ATTRIBUTE_CONDITION] % '[if %s]>')\n \n     pretty = self._render_children(sb, indent_level - 1, indent_str, pretty, xhtml)\n \n     # if len(self.children) > 1:\n     if any(isinstance(child, dom_tag) for child in self):\n       sb.append('\\n')\n-      sb.append(indent_str * (indent_level - 1))\n+      sb.append(indent_str * (1 - indent_level))\n \n     if has_condition:\n       sb.append('<![endif]')\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is likely a missing assignment in the code.",
+        "output": "",
+        "rewrite": "def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n    has_condition = comment.ATTRIBUTE_CONDITION in self.attributes\n\n    sb.append('<!')\n    if not is_revealed:\n      sb.append('--')\n    if has_condition:\n      sb.append('[if %s]>' % self.attributes[comment.ATTRIBUTE_CONDITION])\n\n    pretty = self._render_children(sb, indent_level - 1, indent_str, pretty, xhtml)\n\n    # if len(self.children) > 1:\n    if any(isinstance(child, dom_tag) for child in self):\n      sb.append('\\n')\n      sb.append(indent_str * (indent_level - 1))\n\n    if has_condition:\n      sb.append('<![endif]')\n    if not is_revealed:\n      sb.append('--')\n    sb.append('>')\n\n    return sb",
+        "strategy": "func_pm_remove_assign",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_assign__qljy5v58",
+        "patch": "--- a/dominate/tags.py\n+++ b/dominate/tags.py\n@@ -1105,10 +1105,8 @@\n   # Valid values are 'hidden', 'downlevel' or 'revealed'\n   ATTRIBUTE_DOWNLEVEL = 'downlevel'\n \n-  def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n+def _render(self, sb, indent_level=1, indent_str='  ', pretty=True, xhtml=False):\n     has_condition = comment.ATTRIBUTE_CONDITION in self.attributes\n-    is_revealed   = comment.ATTRIBUTE_DOWNLEVEL in self.attributes and \\\n-        self.attributes[comment.ATTRIBUTE_DOWNLEVEL] == 'revealed'\n \n     sb.append('<!')\n     if not is_revealed:\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is likely a missing assignment in the code.",
+        "output": "",
+        "rewrite": "def __init__(self, title='Dominate', doctype='<!DOCTYPE html>', *a, **kw):\n    '''\n    Creates a new document instance. Accepts `title` and `doctype`\n    '''\n    super(document, self).__init__(*a, **kw)\n    self.doctype    = doctype\n    self.body       = super(document, self).add(tags.body())\n    if title is not None:\n      pass\n    with self.body:\n      self.header   = util.container()\n      self.main     = util.container()\n      self.footer   = util.container()\n    self._entry = self.main",
+        "strategy": "func_pm_remove_assign",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_assign__j68itn3n",
+        "patch": "--- a/dominate/document.py\n+++ b/dominate/document.py\n@@ -27,16 +27,15 @@\n \n class document(tags.html):\n   tagname = 'html'\n-  def __init__(self, title='Dominate', doctype='<!DOCTYPE html>', *a, **kw):\n+def __init__(self, title='Dominate', doctype='<!DOCTYPE html>', *a, **kw):\n     '''\n     Creates a new document instance. Accepts `title` and `doctype`\n     '''\n     super(document, self).__init__(*a, **kw)\n     self.doctype    = doctype\n-    self.head       = super(document, self).add(tags.head())\n     self.body       = super(document, self).add(tags.body())\n     if title is not None:\n-      self.title_node = self.head.add(tags.title(title))\n+      pass\n     with self.body:\n       self.header   = util.container()\n       self.main     = util.container()\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There is one or more missing conditionals that causes the bug.",
+        "output": "",
+        "rewrite": "def __init__(self, title='Dominate', doctype='<!DOCTYPE html>', *a, **kw):\n    '''\n    Creates a new document instance. Accepts `title` and `doctype`\n    '''\n    super(document, self).__init__(*a, **kw)\n    self.doctype    = doctype\n    self.head       = super(document, self).add(tags.head())\n    self.body       = super(document, self).add(tags.body())\n    with self.body:\n      self.header   = util.container()\n      self.main     = util.container()\n      self.footer   = util.container()\n    self._entry = self.main",
+        "strategy": "func_pm_remove_cond",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_cond__u0ld19rb",
+        "patch": "--- a/dominate/document.py\n+++ b/dominate/document.py\n@@ -27,7 +27,7 @@\n \n class document(tags.html):\n   tagname = 'html'\n-  def __init__(self, title='Dominate', doctype='<!DOCTYPE html>', *a, **kw):\n+def __init__(self, title='Dominate', doctype='<!DOCTYPE html>', *a, **kw):\n     '''\n     Creates a new document instance. Accepts `title` and `doctype`\n     '''\n@@ -35,8 +35,6 @@\n     self.doctype    = doctype\n     self.head       = super(document, self).add(tags.head())\n     self.body       = super(document, self).add(tags.body())\n-    if title is not None:\n-      self.title_node = self.head.add(tags.title(title))\n     with self.body:\n       self.header   = util.container()\n       self.main     = util.container()\n",
+        "repo": "Knio__dominate.9082227e"
+    },
+    {
+        "cost": 0.0,
+        "explanation": "There are missing wrappers (with, try blocks) in the code.",
+        "output": "",
+        "rewrite": "def __init__(self, title='Dominate', doctype='<!DOCTYPE html>', *a, **kw):\n    '''\n    Creates a new document instance. Accepts `title` and `doctype`\n    '''\n    super(document, self).__init__(*a, **kw)\n    self.doctype    = doctype\n    self.head       = super(document, self).add(tags.head())\n    self.body       = super(document, self).add(tags.body())\n    if title is not None:\n      self.title_node = self.head.add(tags.title(title))\n    self._entry = self.main",
+        "strategy": "func_pm_remove_wrapper",
+        "instance_id": "Knio__dominate.9082227e.func_pm_remove_wrapper__pkw06oox",
+        "patch": "--- a/dominate/document.py\n+++ b/dominate/document.py\n@@ -27,7 +27,7 @@\n \n class document(tags.html):\n   tagname = 'html'\n-  def __init__(self, title='Dominate', doctype='<!DOCTYPE html>', *a, **kw):\n+def __init__(self, title='Dominate', doctype='<!DOCTYPE html>', *a, **kw):\n     '''\n     Creates a new document instance. Accepts `title` and `doctype`\n     '''\n@@ -37,10 +37,6 @@\n     self.body       = super(document, self).add(tags.body())\n     if title is not None:\n       self.title_node = self.head.add(tags.title(title))\n-    with self.body:\n-      self.header   = util.container()\n-      self.main     = util.container()\n-      self.footer   = util.container()\n     self._entry = self.main\n \n   def get_title(self):\n",
+        "repo": "Knio__dominate.9082227e"
+    }
+]

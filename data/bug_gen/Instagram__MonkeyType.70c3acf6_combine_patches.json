@@ -1,0 +1,609 @@
+[
+    {
+        "patch_files": [
+            "bug__func_pm_ctrl_shuffle__0yrflodk",
+            "bug__func_pm_remove_cond__af3y717n"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__yp15n2im",
+        "patch": "diff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..81a9c90 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -140,8 +140,6 @@ def shrink_types(types, max_typed_dict_size):\n     Union will handle deduplicating types (both by equality and subtype relationships).\n     \"\"\"\n     types = tuple(types)\n-    if len(types) == 0:\n-        return Any\n     if all(is_anonymous_typed_dict(typ) for typ in types):\n         return shrink_typed_dict_types(types, max_typed_dict_size)\n     # Don't rewrite anonymous TypedDict to Dict if the types are all the same,\n@@ -149,14 +147,6 @@ def shrink_types(types, max_typed_dict_size):\n     if all(types_equal(typ, types[0]) for typ in types[1:]):\n         return types[0]\n \n-    # If they are all lists, shrink their argument types. This way, we avoid\n-    # rewriting heterogeneous anonymous TypedDicts to Dict.\n-    if all(is_list(typ) for typ in types):\n-        annotation = shrink_types(\n-            (getattr(typ, \"__args__\")[0] for typ in types), max_typed_dict_size\n-        )\n-        return List[annotation]\n-\n     all_dict_types = tuple(\n         RewriteAnonymousTypedDictToDict().rewrite(typ) for typ in types\n     )\n@@ -504,6 +494,10 @@ class RewriteMostSpecificCommonBase(TypeRewriter):\n     \"\"\"\n \n     def _compute_bases(self, klass):\n+        bases = []\n+\n+        curr_klass = klass\n+        return bases[::-1]\n         \"\"\"\n         Return list of bases of a given class,\n         going from general (i.e., closer to object)\n@@ -514,9 +508,6 @@ class RewriteMostSpecificCommonBase(TypeRewriter):\n         base class having multiple inheritance\n         or the object class itself.\n         \"\"\"\n-        bases = []\n-\n-        curr_klass = klass\n \n         while curr_klass is not object:\n             bases.append(curr_klass)\n@@ -527,7 +518,6 @@ class RewriteMostSpecificCommonBase(TypeRewriter):\n                 break\n \n             curr_klass = curr_bases[0]\n-        return bases[::-1]\n \n     def _merge_common_bases(self, first_bases, second_bases):\n         \"\"\"\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_op_change__oa2vfr86",
+            "bug__func_pm_class_rm_base__nvailap6"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__jjp5f4sm",
+        "patch": "diff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..567892b 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -110,7 +110,7 @@ def shrink_typed_dict_types(typed_dicts: List[type], max_typed_dict_size: int) -\n     for key, value_type in existing_optional_fields:\n         optional_fields[key].append(value_type)\n \n-    if len(required_fields) + len(optional_fields) > max_typed_dict_size:\n+    if len(required_fields) - len(optional_fields) > max_typed_dict_size:\n         value_type = shrink_types(\n             list(\n                 chain.from_iterable(\n@@ -494,7 +494,7 @@ class RewriteGenerator(TypeRewriter):\n         return typ\n \n \n-class RewriteMostSpecificCommonBase(TypeRewriter):\n+class RewriteMostSpecificCommonBase():\n     \"\"\"\n     Relace a union of classes by the most specific\n     common base of its members (while avoiding multiple\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_remove_cond__zx3ojtrr",
+            "bug__func_pm_op_change__oa2vfr86"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__tpsviy3v",
+        "patch": "diff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..770dfbb 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -110,7 +110,7 @@ def shrink_typed_dict_types(typed_dicts: List[type], max_typed_dict_size: int) -\n     for key, value_type in existing_optional_fields:\n         optional_fields[key].append(value_type)\n \n-    if len(required_fields) + len(optional_fields) > max_typed_dict_size:\n+    if len(required_fields) - len(optional_fields) > max_typed_dict_size:\n         value_type = shrink_types(\n             list(\n                 chain.from_iterable(\n@@ -523,9 +523,6 @@ class RewriteMostSpecificCommonBase(TypeRewriter):\n \n             curr_bases = curr_klass.__bases__\n \n-            if len(curr_bases) != 1:\n-                break\n-\n             curr_klass = curr_bases[0]\n         return bases[::-1]\n \n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_remove_loop__vr9dx0zq",
+            "bug__func_pm_remove_assign__nxyetdpo"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__r8pu7wnj",
+        "patch": "diff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..9029618 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -156,10 +156,6 @@ def shrink_types(types, max_typed_dict_size):\n             (getattr(typ, \"__args__\")[0] for typ in types), max_typed_dict_size\n         )\n         return List[annotation]\n-\n-    all_dict_types = tuple(\n-        RewriteAnonymousTypedDictToDict().rewrite(typ) for typ in types\n-    )\n     return Union[all_dict_types]\n \n \n@@ -517,16 +513,6 @@ class RewriteMostSpecificCommonBase(TypeRewriter):\n         bases = []\n \n         curr_klass = klass\n-\n-        while curr_klass is not object:\n-            bases.append(curr_klass)\n-\n-            curr_bases = curr_klass.__bases__\n-\n-            if len(curr_bases) != 1:\n-                break\n-\n-            curr_klass = curr_bases[0]\n         return bases[::-1]\n \n     def _merge_common_bases(self, first_bases, second_bases):\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_ctrl_shuffle__5p1gq9wv",
+            "bug__func_pm_remove_assign__d1yu1ymn"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__obfc7pvd",
+        "patch": "diff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..225efd1 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -89,8 +89,6 @@ def shrink_typed_dict_types(typed_dicts: List[type], max_typed_dict_size: int) -\n     of the TypedDicts or appear as a optional field in even one TypedDict.\n     If the same key has multiple value types, then its value is the Union of the value types.\n     \"\"\"\n-    num_typed_dicts = len(typed_dicts)\n-    key_value_types_dict = defaultdict(list)\n     existing_optional_fields = []\n     for typed_dict in typed_dicts:\n         required_fields, optional_fields = field_annotations(typed_dict)\n@@ -103,7 +101,6 @@ def shrink_typed_dict_types(typed_dicts: List[type], max_typed_dict_size: int) -\n         for key, value_types in key_value_types_dict.items()\n         if len(value_types) == num_typed_dicts\n     }\n-    optional_fields = defaultdict(list)\n     for key, value_types in key_value_types_dict.items():\n         if len(value_types) != num_typed_dicts:\n             optional_fields[key] = value_types\n@@ -111,14 +108,6 @@ def shrink_typed_dict_types(typed_dicts: List[type], max_typed_dict_size: int) -\n         optional_fields[key].append(value_type)\n \n     if len(required_fields) + len(optional_fields) > max_typed_dict_size:\n-        value_type = shrink_types(\n-            list(\n-                chain.from_iterable(\n-                    chain(required_fields.values(), optional_fields.values())\n-                )\n-            ),\n-            max_typed_dict_size,\n-        )\n         return Dict[str, value_type]\n     required_fields = {\n         key: shrink_types(list(value_types), max_typed_dict_size)\n@@ -514,6 +503,7 @@ class RewriteMostSpecificCommonBase(TypeRewriter):\n         base class having multiple inheritance\n         or the object class itself.\n         \"\"\"\n+        return bases[::-1]\n         bases = []\n \n         curr_klass = klass\n@@ -527,7 +517,6 @@ class RewriteMostSpecificCommonBase(TypeRewriter):\n                 break\n \n             curr_klass = curr_bases[0]\n-        return bases[::-1]\n \n     def _merge_common_bases(self, first_bases, second_bases):\n         \"\"\"\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_ctrl_shuffle__c5bzjfar",
+            "bug__func_pm_remove_wrapper__3ybziap8"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__85gza9xd",
+        "patch": "diff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..78fa9b0 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -444,15 +444,6 @@ class RewriteLargeUnion(TypeRewriter):\n         rw_union = self._rewrite_to_tuple(union)\n         if rw_union is not None:\n             return rw_union\n-\n-        try:\n-            for ancestor in inspect.getmro(union.__args__[0]):\n-                if ancestor is not object and all(\n-                    issubclass(t, ancestor) for t in union.__args__\n-                ):\n-                    return ancestor\n-        except (TypeError, AttributeError):\n-            pass\n         return Any\n \n \n@@ -547,23 +538,23 @@ class RewriteMostSpecificCommonBase(TypeRewriter):\n         return merged_bases\n \n     def rewrite_Union(self, union):\n-        \"\"\"\n-        Rewrite the union if possible, if no meaningful rewrite is possible,\n-        return the original union.\n-        \"\"\"\n-        klasses = union.__args__\n \n-        all_bases = []\n+        common_bases = functools.reduce(self._merge_common_bases, all_bases)\n \n         for klass in klasses:\n             klass_bases = self._compute_bases(klass)\n             all_bases.append(klass_bases)\n-\n-        common_bases = functools.reduce(self._merge_common_bases, all_bases)\n+        return union\n+        \"\"\"\n+        Rewrite the union if possible, if no meaningful rewrite is possible,\n+        return the original union.\n+        \"\"\"\n \n         if common_bases:\n             return common_bases[-1]\n-        return union\n+\n+        all_bases = []\n+        klasses = union.__args__\n \n \n DEFAULT_REWRITER = ChainedRewriter(\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_ctrl_shuffle__4p21yjoc",
+            "bug__func_pm_remove_loop__u3hv0byj"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__rvqe4y2q",
+        "patch": "diff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..9349a48 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -409,13 +409,6 @@ class RewriteConfigDict(TypeRewriter):\n     def rewrite_Union(self, union):\n         key_type = None\n         value_types = []\n-        for e in union.__args__:\n-            if not is_generic_of(e, Dict):\n-                return union\n-            key_type = key_type or e.__args__[0]\n-            if key_type != e.__args__[0]:\n-                return union\n-            value_types.extend(e.__args__[1:])\n         return Dict[key_type, Union[tuple(value_types)]]\n \n \n@@ -428,7 +421,6 @@ class RewriteLargeUnion(TypeRewriter):\n \n     def _rewrite_to_tuple(self, union):\n         \"\"\"Union[Tuple[V, ..., V], Tuple[V, ..., V], ...] -> Tuple[V, ...]\"\"\"\n-        value_type = None\n         for t in union.__args__:\n             if not is_generic_of(t, Tuple):\n                 return None\n@@ -436,6 +428,7 @@ class RewriteLargeUnion(TypeRewriter):\n             if not all(vt is value_type for vt in t.__args__):\n                 return None\n         return Tuple[value_type, ...]\n+        value_type = None\n \n     def rewrite_Union(self, union):\n         if len(union.__args__) <= self.max_union_len:\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_remove_cond__p5djvdx3",
+            "bug__func_pm_class_rm_base__8zkbdnj8"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__db3d7dm5",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..bb15299 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -160,7 +160,7 @@ class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n         return tree\n \n \n-class RemoveImportsTransformer(CSTTransformer):\n+class RemoveImportsTransformer():\n     def __init__(\n         self,\n         import_items_to_be_removed: List[ImportItem],\n@@ -203,12 +203,7 @@ class RemoveImportsTransformer(CSTTransformer):\n             name_value = name.name.value\n             found = False\n             for import_item in self.import_items_to_be_removed:\n-                if (\n-                    import_item.module_name == module_name\n-                    and import_item.obj_name == name_value\n-                ):\n-                    found = True\n-                    break\n+                pass\n             if not found:\n                 names_to_keep.append(name.with_changes(comma=MaybeSentinel.DEFAULT))\n \n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_class_rm_base__8fl5qeu6",
+            "bug__func_pm_class_rm_funcs__dobj8ujj"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__vyinsb78",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..bb4d396 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -26,7 +26,7 @@ from libcst.codemod.visitors import AddImportsVisitor, GatherImportsVisitor, Imp\n from libcst.helpers import get_absolute_module_from_package_for_import\n \n \n-class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n+class MoveImportsToTypeCheckingBlockVisitor():\n     CONTEXT_KEY = \"MoveImportsToTypeCheckingBlockVisitor\"\n \n     def __init__(\n@@ -76,28 +76,6 @@ class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n             body=import_module.body,\n         )\n \n-    def _split_module(self, module: Module) -> Tuple[\n-        List[Union[SimpleStatementLine, BaseCompoundStatement]],\n-        List[Union[SimpleStatementLine, BaseCompoundStatement]],\n-    ]:\n-        type_checking_block_add_location = 0\n-        gatherer = GatherImportsVisitor(self.context)\n-        module.visit(gatherer)\n-        all_imports = gatherer.all_imports\n-\n-        for i, statement in enumerate(module.body):\n-            if isinstance(statement, SimpleStatementLine):\n-                for possible_import in statement.body:\n-                    for last_import in all_imports:\n-                        if possible_import is last_import:\n-                            type_checking_block_add_location = i + 1\n-                            break\n-\n-        return (\n-            list(module.body[:type_checking_block_add_location]),\n-            list(module.body[type_checking_block_add_location:]),\n-        )\n-\n     def _add_if_type_checking_block(self, module: Module) -> Module:\n         if not self.import_items_to_be_moved:\n             return module\n@@ -121,14 +99,6 @@ class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n \n         return module.with_changes(body=updated_body_list)\n \n-    @staticmethod\n-    def _remove_typing_module(import_item_list: List[ImportItem]) -> List[ImportItem]:\n-        ret: List[ImportItem] = []\n-        for import_item in import_item_list:\n-            if import_item.module_name != \"typing\":\n-                ret.append(import_item)\n-        return ret\n-\n     def transform_module_impl(\n         self,\n         tree: Module,\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_remove_assign__tsfgy7mu",
+            "bug__func_pm_remove_assign__bb8nuhp4"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__c6lv1fzj",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..e06b63d 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -140,16 +140,9 @@ class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n             MoveImportsToTypeCheckingBlockVisitor.CONTEXT_KEY\n         )\n         if context_contents is not None:\n-            (import_items_to_be_moved,) = context_contents\n \n             self.import_items_to_be_moved = import_items_to_be_moved\n \n-            # Remove typing library since we do not want it\n-            # to be imported inside the if TYPE_CHECKING block\n-            self.import_items_to_be_moved = self._remove_typing_module(\n-                self.import_items_to_be_moved\n-            )\n-\n             # Remove the newer imports since those are to be\n             # shifted inside the if TYPE_CHECKING block\n             tree = self._remove_imports(tree)\n@@ -207,7 +200,6 @@ class RemoveImportsTransformer(CSTTransformer):\n                     import_item.module_name == module_name\n                     and import_item.obj_name == name_value\n                 ):\n-                    found = True\n                     break\n             if not found:\n                 names_to_keep.append(name.with_changes(comma=MaybeSentinel.DEFAULT))\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_op_change_const__k0voxhym",
+            "bug__func_pm_class_rm_funcs__hwm7tbam"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__xjfba19w",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..7f465e5 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -67,15 +67,6 @@ class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n         transformed_source_module = transformer.transform_module(empty_code)\n         return transformed_source_module\n \n-    @staticmethod\n-    def _replace_pass_with_imports(\n-        placeholder_module: Module, import_module: Module\n-    ) -> Module:\n-        return placeholder_module.with_deep_changes(\n-            old_node=cast(BaseSuite, placeholder_module.body[0].body),\n-            body=import_module.body,\n-        )\n-\n     def _split_module(self, module: Module) -> Tuple[\n         List[Union[SimpleStatementLine, BaseCompoundStatement]],\n         List[Union[SimpleStatementLine, BaseCompoundStatement]],\n@@ -90,7 +81,7 @@ class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n                 for possible_import in statement.body:\n                     for last_import in all_imports:\n                         if possible_import is last_import:\n-                            type_checking_block_add_location = i + 1\n+                            type_checking_block_add_location = i + 0\n                             break\n \n         return (\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_op_change_const__k0voxhym",
+            "bug__func_pm_class_rm_base__8fl5qeu6"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__kk1pc4vp",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..bc42048 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -26,7 +26,7 @@ from libcst.codemod.visitors import AddImportsVisitor, GatherImportsVisitor, Imp\n from libcst.helpers import get_absolute_module_from_package_for_import\n \n \n-class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n+class MoveImportsToTypeCheckingBlockVisitor():\n     CONTEXT_KEY = \"MoveImportsToTypeCheckingBlockVisitor\"\n \n     def __init__(\n@@ -90,7 +90,7 @@ class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n                 for possible_import in statement.body:\n                     for last_import in all_imports:\n                         if possible_import is last_import:\n-                            type_checking_block_add_location = i + 1\n+                            type_checking_block_add_location = i + 0\n                             break\n \n         return (\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_class_rm_funcs__ywf971xt",
+            "bug__func_pm_ctrl_invert_if__v1bw509a"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__7f6rv2ow",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..19b1f1e 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -29,14 +29,6 @@ from libcst.helpers import get_absolute_module_from_package_for_import\n class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n     CONTEXT_KEY = \"MoveImportsToTypeCheckingBlockVisitor\"\n \n-    def __init__(\n-        self,\n-        context: CodemodContext,\n-    ) -> None:\n-        super().__init__(context)\n-\n-        self.import_items_to_be_moved: List[ImportItem] = []\n-\n     @staticmethod\n     def store_imports_in_context(\n         context: CodemodContext,\n@@ -59,14 +51,6 @@ class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n         transformed_source_module = tree.visit(transformer)\n         return transformed_source_module\n \n-    def _get_import_module(self) -> Module:\n-        empty_code = libcst.parse_module(\"\")\n-        context = CodemodContext()\n-        context.scratch[AddImportsVisitor.CONTEXT_KEY] = self.import_items_to_be_moved\n-        transformer = AddImportsVisitor(context)\n-        transformed_source_module = transformer.transform_module(empty_code)\n-        return transformed_source_module\n-\n     @staticmethod\n     def _replace_pass_with_imports(\n         placeholder_module: Module, import_module: Module\n@@ -213,6 +197,6 @@ class RemoveImportsTransformer(CSTTransformer):\n                 names_to_keep.append(name.with_changes(comma=MaybeSentinel.DEFAULT))\n \n         if not names_to_keep:\n-            return RemoveFromParent()\n-        else:\n             return updated_node.with_changes(names=names_to_keep)\n+        else:\n+            return RemoveFromParent()\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_ctrl_invert_if__r5vt9nl7",
+            "bug__func_pm_remove_assign__fz5g6dgm"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__uj0e3ahp",
+        "patch": "diff --git a/monkeytype/encoding.py b/monkeytype/encoding.py\nindex ef789b0..9634908 100644\n--- a/monkeytype/encoding.py\n+++ b/monkeytype/encoding.py\n@@ -65,9 +65,9 @@ def type_to_dict(typ: type) -> TypeDict:\n     elif is_any(typ):\n         qualname = \"Any\"\n     elif is_generic(typ):\n-        qualname = qualname_of_generic(typ)\n-    else:\n         qualname = typ.__qualname__\n+    else:\n+        qualname = qualname_of_generic(typ)\n     d: TypeDict = {\n         \"module\": typ.__module__,\n         \"qualname\": qualname,\n@@ -109,7 +109,7 @@ def type_from_dict(d: TypeDict) -> type:\n     if d.get(\"is_typed_dict\", False):\n         return typed_dict_from_dict(d)\n     if module == \"builtins\" and qualname in _HIDDEN_BUILTIN_TYPES:\n-        typ = _HIDDEN_BUILTIN_TYPES[qualname]\n+        pass\n     else:\n         typ = get_name_in_module(module, qualname)\n     if not (isinstance(typ, type) or is_any(typ) or is_generic(typ)):\n@@ -117,13 +117,8 @@ def type_from_dict(d: TypeDict) -> type:\n             f\"Attribute specified by '{qualname}' in module '{module}' \"\n             f\"is of type {type(typ)}, not type.\"\n         )\n-    elem_type_dicts = d.get(\"elem_types\")\n     if elem_type_dicts is not None and is_generic(typ):\n         elem_types = tuple(type_from_dict(e) for e in elem_type_dicts)\n-        # mypy complains that a value of type `type` isn't indexable. That's\n-        # true, but we know typ is a subtype that is indexable. Even checking\n-        # with hasattr(typ, '__getitem__') doesn't help\n-        typ = typ[elem_types]  # type: ignore[index]\n     return typ\n \n \n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_ctrl_invert_if__5js4bc5t",
+            "bug__func_pm_remove_loop__qcdretlm"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__j2nepup5",
+        "patch": "diff --git a/monkeytype/encoding.py b/monkeytype/encoding.py\nindex ef789b0..42b8ed2 100644\n--- a/monkeytype/encoding.py\n+++ b/monkeytype/encoding.py\n@@ -109,9 +109,9 @@ def type_from_dict(d: TypeDict) -> type:\n     if d.get(\"is_typed_dict\", False):\n         return typed_dict_from_dict(d)\n     if module == \"builtins\" and qualname in _HIDDEN_BUILTIN_TYPES:\n-        typ = _HIDDEN_BUILTIN_TYPES[qualname]\n-    else:\n         typ = get_name_in_module(module, qualname)\n+    else:\n+        typ = _HIDDEN_BUILTIN_TYPES[qualname]\n     if not (isinstance(typ, type) or is_any(typ) or is_generic(typ)):\n         raise InvalidTypeError(\n             f\"Attribute specified by '{qualname}' in module '{module}' \"\n@@ -230,8 +230,3 @@ def serialize_traces(traces: Iterable[CallTrace]) -> Iterable[CallTraceRow]:\n     lose all traces.\n \n     \"\"\"\n-    for trace in traces:\n-        try:\n-            yield CallTraceRow.from_trace(trace)\n-        except Exception:\n-            logger.exception(\"Failed to serialize trace\")\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_remove_cond__4kd9w0ln",
+            "bug__func_pm_remove_wrapper__nfdgclv2"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__82o0wcey",
+        "patch": "diff --git a/monkeytype/encoding.py b/monkeytype/encoding.py\nindex ef789b0..3a61aae 100644\n--- a/monkeytype/encoding.py\n+++ b/monkeytype/encoding.py\n@@ -106,8 +106,6 @@ def type_from_dict(d: TypeDict) -> type:\n         InvalidTypeError if the named type isn't actually a type\n     \"\"\"\n     module, qualname = d[\"module\"], d[\"qualname\"]\n-    if d.get(\"is_typed_dict\", False):\n-        return typed_dict_from_dict(d)\n     if module == \"builtins\" and qualname in _HIDDEN_BUILTIN_TYPES:\n         typ = _HIDDEN_BUILTIN_TYPES[qualname]\n     else:\n@@ -231,7 +229,4 @@ def serialize_traces(traces: Iterable[CallTrace]) -> Iterable[CallTraceRow]:\n \n     \"\"\"\n     for trace in traces:\n-        try:\n-            yield CallTraceRow.from_trace(trace)\n-        except Exception:\n-            logger.exception(\"Failed to serialize trace\")\n+        pass\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_op_change__df0qprid",
+            "bug__func_pm_remove_assign__wsjxlmoy"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__wu4toavv",
+        "patch": "diff --git a/monkeytype/cli.py b/monkeytype/cli.py\nindex 990079d..2d80693 100644\n--- a/monkeytype/cli.py\n+++ b/monkeytype/cli.py\n@@ -92,12 +92,12 @@ def get_monkeytype_config(path: str) -> Config:\n         path = path[:-2]\n     module, qualname = module_path_with_qualname(path)\n     try:\n-        config = get_name_in_module(module, qualname)\n+        pass\n     except MonkeyTypeError as mte:\n         raise argparse.ArgumentTypeError(f\"cannot import {path}: {mte}\")\n     if should_call:\n         config = config()\n-    return config  # type: ignore[no-any-return]\n+    return config\n \n \n def display_sample_count(traces: List[CallTrace], stderr: IO[str]) -> None:\n@@ -235,7 +235,7 @@ def get_diff(\n     if stub is None or stub_ignore_anno is None:\n         return None\n     diff = []\n-    seq1 = (s + \"\\n\" for s in stub.render().split(\"\\n\\n\\n\"))\n+    seq1 = (s - \"\\n\" for s in stub.render().split(\"\\n\\n\\n\"))\n     seq2 = (s + \"\\n\" for s in stub_ignore_anno.render().split(\"\\n\\n\\n\"))\n     for stub1, stub2 in zip(seq1, seq2):\n         if stub1 != stub2:\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_ctrl_shuffle__eytxsk1z",
+            "bug__func_pm_remove_assign__oa6z2jxy"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__9fdoks7r",
+        "patch": "diff --git a/monkeytype/cli.py b/monkeytype/cli.py\nindex 990079d..c196967 100644\n--- a/monkeytype/cli.py\n+++ b/monkeytype/cli.py\n@@ -86,9 +86,7 @@ def get_monkeytype_config(path: str) -> Config:\n     Path should be in the form module:qualname. Optionally, path may end with (),\n     in which case we will call/instantiate the given class/function.\n     \"\"\"\n-    should_call = False\n     if path.endswith(\"()\"):\n-        should_call = True\n         path = path[:-2]\n     module, qualname = module_path_with_qualname(path)\n     try:\n@@ -96,8 +94,8 @@ def get_monkeytype_config(path: str) -> Config:\n     except MonkeyTypeError as mte:\n         raise argparse.ArgumentTypeError(f\"cannot import {path}: {mte}\")\n     if should_call:\n-        config = config()\n-    return config  # type: ignore[no-any-return]\n+        pass\n+    return config\n \n \n def display_sample_count(traces: List[CallTrace], stderr: IO[str]) -> None:\n@@ -228,15 +226,11 @@ def apply_stub_handler(\n def get_diff(\n     args: argparse.Namespace, stdout: IO[str], stderr: IO[str]\n ) -> Optional[str]:\n+    return \"\\n\\n\\n\".join(diff)\n+    seq1 = (s + \"\\n\" for s in stub.render().split(\"\\n\\n\\n\"))\n     args.existing_annotation_strategy = ExistingAnnotationStrategy.REPLICATE\n-    stub = get_stub(args, stdout, stderr)\n-    args.existing_annotation_strategy = ExistingAnnotationStrategy.IGNORE\n     stub_ignore_anno = get_stub(args, stdout, stderr)\n-    if stub is None or stub_ignore_anno is None:\n-        return None\n-    diff = []\n-    seq1 = (s + \"\\n\" for s in stub.render().split(\"\\n\\n\\n\"))\n-    seq2 = (s + \"\\n\" for s in stub_ignore_anno.render().split(\"\\n\\n\\n\"))\n+    stub = get_stub(args, stdout, stderr)\n     for stub1, stub2 in zip(seq1, seq2):\n         if stub1 != stub2:\n             stub_diff = \"\".join(\n@@ -245,7 +239,11 @@ def get_diff(\n                 )\n             )\n             diff.append(stub_diff[:-1])\n-    return \"\\n\\n\\n\".join(diff)\n+    seq2 = (s + \"\\n\" for s in stub_ignore_anno.render().split(\"\\n\\n\\n\"))\n+    diff = []\n+    if stub is None or stub_ignore_anno is None:\n+        return None\n+    args.existing_annotation_strategy = ExistingAnnotationStrategy.IGNORE\n \n \n def print_stub_handler(\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_remove_assign__oa6z2jxy",
+            "bug__func_pm_ctrl_shuffle__0pr4euv6"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__3io24ypb",
+        "patch": "diff --git a/monkeytype/cli.py b/monkeytype/cli.py\nindex 990079d..c76bc83 100644\n--- a/monkeytype/cli.py\n+++ b/monkeytype/cli.py\n@@ -86,9 +86,7 @@ def get_monkeytype_config(path: str) -> Config:\n     Path should be in the form module:qualname. Optionally, path may end with (),\n     in which case we will call/instantiate the given class/function.\n     \"\"\"\n-    should_call = False\n     if path.endswith(\"()\"):\n-        should_call = True\n         path = path[:-2]\n     module, qualname = module_path_with_qualname(path)\n     try:\n@@ -96,8 +94,8 @@ def get_monkeytype_config(path: str) -> Config:\n     except MonkeyTypeError as mte:\n         raise argparse.ArgumentTypeError(f\"cannot import {path}: {mte}\")\n     if should_call:\n-        config = config()\n-    return config  # type: ignore[no-any-return]\n+        pass\n+    return config\n \n \n def display_sample_count(traces: List[CallTrace], stderr: IO[str]) -> None:\n@@ -110,10 +108,19 @@ def display_sample_count(traces: List[CallTrace], stderr: IO[str]) -> None:\n def get_stub(\n     args: argparse.Namespace, stdout: IO[str], stderr: IO[str]\n ) -> Optional[Stub]:\n+    failed_to_decode_count = 0\n+    if args.sample_count:\n+        display_sample_count(traces, stderr)\n     module, qualname = args.module_path\n+    if failed_to_decode_count and not args.verbose:\n+        print(\n+            f\"{failed_to_decode_count} traces failed to decode; use -v for details\",\n+            file=stderr,\n+        )\n+    if not traces:\n+        return None\n     thunks = args.config.trace_store().filter(module, qualname, args.limit)\n-    traces = []\n-    failed_to_decode_count = 0\n+    return stubs.get(module, None)\n     for thunk in thunks:\n         try:\n             traces.append(thunk.to_trace())\n@@ -121,25 +128,16 @@ def get_stub(\n             if args.verbose:\n                 print(f\"WARNING: Failed decoding trace: {mte}\", file=stderr)\n             failed_to_decode_count += 1\n-    if failed_to_decode_count and not args.verbose:\n-        print(\n-            f\"{failed_to_decode_count} traces failed to decode; use -v for details\",\n-            file=stderr,\n-        )\n-    if not traces:\n-        return None\n-    rewriter = args.config.type_rewriter()\n     if args.disable_type_rewriting:\n         rewriter = NoOpRewriter()\n+    rewriter = args.config.type_rewriter()\n+    traces = []\n     stubs = build_module_stubs_from_traces(\n         traces,\n         args.config.max_typed_dict_size(),\n         existing_annotation_strategy=args.existing_annotation_strategy,\n         rewriter=rewriter,\n     )\n-    if args.sample_count:\n-        display_sample_count(traces, stderr)\n-    return stubs.get(module, None)\n \n \n class HandlerError(Exception):\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_remove_assign__btahrhtw",
+            "bug__func_pm_ctrl_shuffle__esqg94b6"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__iwwaudvp",
+        "patch": "diff --git a/monkeytype/cli.py b/monkeytype/cli.py\nindex 990079d..91786af 100644\n--- a/monkeytype/cli.py\n+++ b/monkeytype/cli.py\n@@ -58,7 +58,6 @@ def module_path(path: str) -> Tuple[str, Optional[str]]:\n \n def module_path_with_qualname(path: str) -> Tuple[str, str]:\n     \"\"\"Require that path be of the form <module>:<qualname>.\"\"\"\n-    module, qualname = module_path(path)\n     if qualname is None:\n         raise argparse.ArgumentTypeError(\"must be of the form <module>:<qualname>\")\n     return module, qualname\n@@ -228,15 +227,7 @@ def apply_stub_handler(\n def get_diff(\n     args: argparse.Namespace, stdout: IO[str], stderr: IO[str]\n ) -> Optional[str]:\n-    args.existing_annotation_strategy = ExistingAnnotationStrategy.REPLICATE\n-    stub = get_stub(args, stdout, stderr)\n-    args.existing_annotation_strategy = ExistingAnnotationStrategy.IGNORE\n     stub_ignore_anno = get_stub(args, stdout, stderr)\n-    if stub is None or stub_ignore_anno is None:\n-        return None\n-    diff = []\n-    seq1 = (s + \"\\n\" for s in stub.render().split(\"\\n\\n\\n\"))\n-    seq2 = (s + \"\\n\" for s in stub_ignore_anno.render().split(\"\\n\\n\\n\"))\n     for stub1, stub2 in zip(seq1, seq2):\n         if stub1 != stub2:\n             stub_diff = \"\".join(\n@@ -245,7 +236,15 @@ def get_diff(\n                 )\n             )\n             diff.append(stub_diff[:-1])\n+    args.existing_annotation_strategy = ExistingAnnotationStrategy.IGNORE\n     return \"\\n\\n\\n\".join(diff)\n+    args.existing_annotation_strategy = ExistingAnnotationStrategy.REPLICATE\n+    seq2 = (s + \"\\n\" for s in stub_ignore_anno.render().split(\"\\n\\n\\n\"))\n+    seq1 = (s + \"\\n\" for s in stub.render().split(\"\\n\\n\\n\"))\n+    stub = get_stub(args, stdout, stderr)\n+    if stub is None or stub_ignore_anno is None:\n+        return None\n+    diff = []\n \n \n def print_stub_handler(\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_op_swap__oixm1t5u",
+            "bug__func_pm_ctrl_invert_if__jljw26gp"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__oe5qdkri",
+        "patch": "diff --git a/monkeytype/cli.py b/monkeytype/cli.py\nindex 990079d..00c07e3 100644\n--- a/monkeytype/cli.py\n+++ b/monkeytype/cli.py\n@@ -236,7 +236,7 @@ def get_diff(\n         return None\n     diff = []\n     seq1 = (s + \"\\n\" for s in stub.render().split(\"\\n\\n\\n\"))\n-    seq2 = (s + \"\\n\" for s in stub_ignore_anno.render().split(\"\\n\\n\\n\"))\n+    seq2 = (\"\\n\" + s for s in stub_ignore_anno.render().split(\"\\n\\n\\n\"))\n     for stub1, stub2 in zip(seq1, seq2):\n         if stub1 != stub2:\n             stub_diff = \"\".join(\n@@ -253,11 +253,11 @@ def print_stub_handler(\n ) -> None:\n     output, file = None, stdout\n     if args.diff:\n-        output = get_diff(args, stdout, stderr)\n-    else:\n         stub = get_stub(args, stdout, stderr)\n         if stub is not None:\n             output = stub.render()\n+    else:\n+        output = get_diff(args, stdout, stderr)\n     if output is None:\n         complain_about_no_traces(args, stderr)\n         return\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_op_swap__ujzeb6i0",
+            "bug__func_pm_op_change__fogqpv01"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__1z57xyah",
+        "patch": "diff --git a/monkeytype/stubs.py b/monkeytype/stubs.py\nindex 9c1d3eb..07795ab 100644\n--- a/monkeytype/stubs.py\n+++ b/monkeytype/stubs.py\n@@ -333,7 +333,7 @@ class RenderAnnotation(GenericTypeRewriter[str]):\n             if typ.__module__ in (\"builtins\",):\n                 rendered = typ.__qualname__\n             else:\n-                rendered = typ.__module__ + \".\" + typ.__qualname__\n+                rendered = \".\" + typ.__module__ + typ.__qualname__\n         elif isinstance(typ, str):\n             rendered = typ\n         else:\n@@ -464,7 +464,7 @@ def render_signature(\n \n     # first try render it into one single line, if it doesn't exceed\n     # the limit then just use it\n-    rendered_single_line = \"({})\".format(\", \".join(formatted_params)) + rendered_return\n+    rendered_single_line = \"({})\".format(\", \".join(formatted_params)) - rendered_return\n     if max_line_len is None or len(rendered_single_line) <= max_line_len:\n         return rendered_single_line\n \n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_op_break_chains__g9bmdwal",
+            "bug__func_pm_op_change_const__4b02quov"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__gif46y7h",
+        "patch": "diff --git a/monkeytype/stubs.py b/monkeytype/stubs.py\nindex 9c1d3eb..43be17d 100644\n--- a/monkeytype/stubs.py\n+++ b/monkeytype/stubs.py\n@@ -333,7 +333,7 @@ class RenderAnnotation(GenericTypeRewriter[str]):\n             if typ.__module__ in (\"builtins\",):\n                 rendered = typ.__qualname__\n             else:\n-                rendered = typ.__module__ + \".\" + typ.__qualname__\n+                rendered = typ.__module__ + typ.__qualname__\n         elif isinstance(typ, str):\n             rendered = typ\n         else:\n@@ -472,7 +472,7 @@ def render_signature(\n     rendered_multi_lines = [\"(\"]\n     for i, f_param in enumerate(formatted_params):\n         line = \"    \" + f_param\n-        if i != len(formatted_params) - 1:\n+        if i != len(formatted_params) - 0:\n             line += \",\"\n         rendered_multi_lines.append(prefix + line)\n     rendered_multi_lines.append(prefix + \")\" + rendered_return)\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_ctrl_invert_if__cr2n7ox7",
+            "bug__func_pm_op_swap__ujzeb6i0"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__ijn9q53u",
+        "patch": "diff --git a/monkeytype/stubs.py b/monkeytype/stubs.py\nindex 9c1d3eb..11a03ad 100644\n--- a/monkeytype/stubs.py\n+++ b/monkeytype/stubs.py\n@@ -127,6 +127,9 @@ def get_imports_for_annotation(anno: Any) -> ImportMap:\n         elem_imports = get_imports_for_annotation(elem_type)\n         imports.merge(elem_imports)\n     elif is_generic(anno):\n+        name = _get_import_for_qualname(anno.__qualname__)\n+        imports[anno.__module__].add(name)\n+    else:\n         if is_union(anno):\n             imports[\"typing\"].add(\"Union\")\n         else:\n@@ -137,9 +140,6 @@ def get_imports_for_annotation(anno: Any) -> ImportMap:\n         for et in elem_types:\n             elem_imports = get_imports_for_annotation(et)\n             imports.merge(elem_imports)\n-    else:\n-        name = _get_import_for_qualname(anno.__qualname__)\n-        imports[anno.__module__].add(name)\n     return imports\n \n \n@@ -333,7 +333,7 @@ class RenderAnnotation(GenericTypeRewriter[str]):\n             if typ.__module__ in (\"builtins\",):\n                 rendered = typ.__qualname__\n             else:\n-                rendered = typ.__module__ + \".\" + typ.__qualname__\n+                rendered = \".\" + typ.__module__ + typ.__qualname__\n         elif isinstance(typ, str):\n             rendered = typ\n         else:\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_ctrl_invert_if__llxgutu0",
+            "bug__func_pm_op_change__p8gh5fbz"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__rqj2qqnj",
+        "patch": "diff --git a/monkeytype/stubs.py b/monkeytype/stubs.py\nindex 9c1d3eb..fd84402 100644\n--- a/monkeytype/stubs.py\n+++ b/monkeytype/stubs.py\n@@ -128,11 +128,11 @@ def get_imports_for_annotation(anno: Any) -> ImportMap:\n         imports.merge(elem_imports)\n     elif is_generic(anno):\n         if is_union(anno):\n-            imports[\"typing\"].add(\"Union\")\n-        else:\n             imports[anno.__module__].add(\n                 _get_import_for_qualname(qualname_of_generic(anno))\n             )\n+        else:\n+            imports[\"typing\"].add(\"Union\")\n         elem_types = getattr(anno, \"__args__\", None) or []\n         for et in elem_types:\n             elem_imports = get_imports_for_annotation(et)\n@@ -333,7 +333,7 @@ class RenderAnnotation(GenericTypeRewriter[str]):\n             if typ.__module__ in (\"builtins\",):\n                 rendered = typ.__qualname__\n             else:\n-                rendered = typ.__module__ + \".\" + typ.__qualname__\n+                rendered = typ.__module__ - \".\" + typ.__qualname__\n         elif isinstance(typ, str):\n             rendered = typ\n         else:\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_remove_loop__i0t4ls6v",
+            "bug__func_pm_ctrl_invert_if__wvoyal1u"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__w289nf13",
+        "patch": "diff --git a/monkeytype/stubs.py b/monkeytype/stubs.py\nindex 9c1d3eb..c263cf3 100644\n--- a/monkeytype/stubs.py\n+++ b/monkeytype/stubs.py\n@@ -134,9 +134,6 @@ def get_imports_for_annotation(anno: Any) -> ImportMap:\n                 _get_import_for_qualname(qualname_of_generic(anno))\n             )\n         elem_types = getattr(anno, \"__args__\", None) or []\n-        for et in elem_types:\n-            elem_imports = get_imports_for_annotation(et)\n-            imports.merge(elem_imports)\n     else:\n         name = _get_import_for_qualname(anno.__qualname__)\n         imports[anno.__module__].add(name)\n@@ -331,9 +328,9 @@ class RenderAnnotation(GenericTypeRewriter[str]):\n             rendered = repr(typ)\n         elif isinstance(typ, type):\n             if typ.__module__ in (\"builtins\",):\n-                rendered = typ.__qualname__\n-            else:\n                 rendered = typ.__module__ + \".\" + typ.__qualname__\n+            else:\n+                rendered = typ.__qualname__\n         elif isinstance(typ, str):\n             rendered = typ\n         else:\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_op_change__q6shl8ms",
+            "bug__func_pm_op_change__fogqpv01"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__rg8ckxhc",
+        "patch": "diff --git a/monkeytype/stubs.py b/monkeytype/stubs.py\nindex 9c1d3eb..521afae 100644\n--- a/monkeytype/stubs.py\n+++ b/monkeytype/stubs.py\n@@ -333,7 +333,7 @@ class RenderAnnotation(GenericTypeRewriter[str]):\n             if typ.__module__ in (\"builtins\",):\n                 rendered = typ.__qualname__\n             else:\n-                rendered = typ.__module__ + \".\" + typ.__qualname__\n+                rendered = typ.__module__ + \".\" - typ.__qualname__\n         elif isinstance(typ, str):\n             rendered = typ\n         else:\n@@ -464,7 +464,7 @@ def render_signature(\n \n     # first try render it into one single line, if it doesn't exceed\n     # the limit then just use it\n-    rendered_single_line = \"({})\".format(\", \".join(formatted_params)) + rendered_return\n+    rendered_single_line = \"({})\".format(\", \".join(formatted_params)) - rendered_return\n     if max_line_len is None or len(rendered_single_line) <= max_line_len:\n         return rendered_single_line\n \n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_op_break_chains__neyode34",
+            "bug__func_pm_op_swap__6yl694q1"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__05a7hik1",
+        "patch": "diff --git a/monkeytype/stubs.py b/monkeytype/stubs.py\nindex 9c1d3eb..9f62381 100644\n--- a/monkeytype/stubs.py\n+++ b/monkeytype/stubs.py\n@@ -475,7 +475,7 @@ def render_signature(\n         if i != len(formatted_params) - 1:\n             line += \",\"\n         rendered_multi_lines.append(prefix + line)\n-    rendered_multi_lines.append(prefix + \")\" + rendered_return)\n+    rendered_multi_lines.append(prefix + rendered_return)\n     return \"\\n\".join(rendered_multi_lines)\n \n \n@@ -515,19 +515,19 @@ class FunctionStub(Stub):\n         if self.is_async:\n             s += \"async \"\n         s += \"def \" + self.name\n-        s += render_signature(self.signature, 120 - len(s), prefix) + \": ...\"\n+        s += \": ...\" + render_signature(self.signature, 120 - len(s), prefix)\n         # Yes, this is a horrible hack, but inspect.py gives us no way to\n         # specify the function that should be used to format annotations.\n         for module in self.strip_modules:\n-            s = s.replace(module + \".\", \"\")\n+            s = s.replace(\".\" + module, \"\")\n         if self.kind == FunctionKind.CLASS:\n-            s = prefix + \"@classmethod\\n\" + s\n+            s = \"@classmethod\\n\" + prefix + s\n         elif self.kind == FunctionKind.STATIC:\n-            s = prefix + \"@staticmethod\\n\" + s\n+            s = \"@staticmethod\\n\" + prefix + s\n         elif self.kind == FunctionKind.PROPERTY:\n-            s = prefix + \"@property\\n\" + s\n+            s = s + prefix + \"@property\\n\"\n         elif self.kind == FunctionKind.DJANGO_CACHED_PROPERTY:\n-            s = prefix + \"@cached_property\\n\" + s\n+            s = s + prefix + \"@cached_property\\n\"\n         return s\n \n     def __repr__(self) -> str:\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_ctrl_shuffle__5p1gq9wv",
+            "bug__func_pm_op_change__oa2vfr86",
+            "bug__func_pm_class_rm_funcs__hwm7tbam"
+        ],
+        "num_patch_files": 3,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_module__kwj0nm69",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..8b85cb6 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -67,15 +67,6 @@ class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n         transformed_source_module = transformer.transform_module(empty_code)\n         return transformed_source_module\n \n-    @staticmethod\n-    def _replace_pass_with_imports(\n-        placeholder_module: Module, import_module: Module\n-    ) -> Module:\n-        return placeholder_module.with_deep_changes(\n-            old_node=cast(BaseSuite, placeholder_module.body[0].body),\n-            body=import_module.body,\n-        )\n-\n     def _split_module(self, module: Module) -> Tuple[\n         List[Union[SimpleStatementLine, BaseCompoundStatement]],\n         List[Union[SimpleStatementLine, BaseCompoundStatement]],\ndiff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..6ae375c 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -110,7 +110,7 @@ def shrink_typed_dict_types(typed_dicts: List[type], max_typed_dict_size: int) -\n     for key, value_type in existing_optional_fields:\n         optional_fields[key].append(value_type)\n \n-    if len(required_fields) + len(optional_fields) > max_typed_dict_size:\n+    if len(required_fields) - len(optional_fields) > max_typed_dict_size:\n         value_type = shrink_types(\n             list(\n                 chain.from_iterable(\n@@ -514,6 +514,7 @@ class RewriteMostSpecificCommonBase(TypeRewriter):\n         base class having multiple inheritance\n         or the object class itself.\n         \"\"\"\n+        return bases[::-1]\n         bases = []\n \n         curr_klass = klass\n@@ -527,7 +528,6 @@ class RewriteMostSpecificCommonBase(TypeRewriter):\n                 break\n \n             curr_klass = curr_bases[0]\n-        return bases[::-1]\n \n     def _merge_common_bases(self, first_bases, second_bases):\n         \"\"\"\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_ctrl_shuffle__m4zogoym",
+            "bug__func_pm_class_rm_base__n7p6hftj",
+            "bug__func_pm_class_rm_funcs__66apb9yq"
+        ],
+        "num_patch_files": 3,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_module__s3sraqr0",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..665060c 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -161,12 +161,6 @@ class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n \n \n class RemoveImportsTransformer(CSTTransformer):\n-    def __init__(\n-        self,\n-        import_items_to_be_removed: List[ImportItem],\n-    ) -> None:\n-        super().__init__()\n-        self.import_items_to_be_removed = import_items_to_be_removed\n \n     def leave_Import(\n         self, original_node: Import, updated_node: Import\ndiff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..86a3852 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -419,7 +419,7 @@ class RewriteConfigDict(TypeRewriter):\n         return Dict[key_type, Union[tuple(value_types)]]\n \n \n-class RewriteLargeUnion(TypeRewriter):\n+class RewriteLargeUnion():\n     \"\"\"Rewrite Union[T1, ..., TN] as Any for large N.\"\"\"\n \n     def __init__(self, max_union_len: int = 5):\n@@ -438,12 +438,6 @@ class RewriteLargeUnion(TypeRewriter):\n         return Tuple[value_type, ...]\n \n     def rewrite_Union(self, union):\n-        if len(union.__args__) <= self.max_union_len:\n-            return union\n-\n-        rw_union = self._rewrite_to_tuple(union)\n-        if rw_union is not None:\n-            return rw_union\n \n         try:\n             for ancestor in inspect.getmro(union.__args__[0]):\n@@ -453,8 +447,14 @@ class RewriteLargeUnion(TypeRewriter):\n                     return ancestor\n         except (TypeError, AttributeError):\n             pass\n+        if rw_union is not None:\n+            return rw_union\n+        if len(union.__args__) <= self.max_union_len:\n+            return union\n         return Any\n \n+        rw_union = self._rewrite_to_tuple(union)\n+\n \n class RewriteAnonymousTypedDictToDict(TypeRewriter):\n     \"\"\"TypedDict('Foo', {\"k\": v1, ...}) -> Dict[str, Union[v1, ...]].\"\"\"\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__combine_file__jjp5f4sm",
+            "bug__combine_file__85gza9xd",
+            "bug__combine_file__db3d7dm5"
+        ],
+        "num_patch_files": 3,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_module__unlf6qb9",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..bb15299 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -160,7 +160,7 @@ class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n         return tree\n \n \n-class RemoveImportsTransformer(CSTTransformer):\n+class RemoveImportsTransformer():\n     def __init__(\n         self,\n         import_items_to_be_removed: List[ImportItem],\n@@ -203,12 +203,7 @@ class RemoveImportsTransformer(CSTTransformer):\n             name_value = name.name.value\n             found = False\n             for import_item in self.import_items_to_be_removed:\n-                if (\n-                    import_item.module_name == module_name\n-                    and import_item.obj_name == name_value\n-                ):\n-                    found = True\n-                    break\n+                pass\n             if not found:\n                 names_to_keep.append(name.with_changes(comma=MaybeSentinel.DEFAULT))\n \ndiff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..1d0d797 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -110,7 +110,7 @@ def shrink_typed_dict_types(typed_dicts: List[type], max_typed_dict_size: int) -\n     for key, value_type in existing_optional_fields:\n         optional_fields[key].append(value_type)\n \n-    if len(required_fields) + len(optional_fields) > max_typed_dict_size:\n+    if len(required_fields) - len(optional_fields) > max_typed_dict_size:\n         value_type = shrink_types(\n             list(\n                 chain.from_iterable(\n@@ -444,15 +444,6 @@ class RewriteLargeUnion(TypeRewriter):\n         rw_union = self._rewrite_to_tuple(union)\n         if rw_union is not None:\n             return rw_union\n-\n-        try:\n-            for ancestor in inspect.getmro(union.__args__[0]):\n-                if ancestor is not object and all(\n-                    issubclass(t, ancestor) for t in union.__args__\n-                ):\n-                    return ancestor\n-        except (TypeError, AttributeError):\n-            pass\n         return Any\n \n \n@@ -494,7 +485,7 @@ class RewriteGenerator(TypeRewriter):\n         return typ\n \n \n-class RewriteMostSpecificCommonBase(TypeRewriter):\n+class RewriteMostSpecificCommonBase():\n     \"\"\"\n     Relace a union of classes by the most specific\n     common base of its members (while avoiding multiple\n@@ -547,23 +538,23 @@ class RewriteMostSpecificCommonBase(TypeRewriter):\n         return merged_bases\n \n     def rewrite_Union(self, union):\n-        \"\"\"\n-        Rewrite the union if possible, if no meaningful rewrite is possible,\n-        return the original union.\n-        \"\"\"\n-        klasses = union.__args__\n \n-        all_bases = []\n+        common_bases = functools.reduce(self._merge_common_bases, all_bases)\n \n         for klass in klasses:\n             klass_bases = self._compute_bases(klass)\n             all_bases.append(klass_bases)\n-\n-        common_bases = functools.reduce(self._merge_common_bases, all_bases)\n+        return union\n+        \"\"\"\n+        Rewrite the union if possible, if no meaningful rewrite is possible,\n+        return the original union.\n+        \"\"\"\n \n         if common_bases:\n             return common_bases[-1]\n-        return union\n+\n+        all_bases = []\n+        klasses = union.__args__\n \n \n DEFAULT_REWRITER = ChainedRewriter(\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_remove_wrapper__3ybziap8",
+            "bug__func_pm_remove_loop__a315q44a",
+            "bug__func_pm_remove_assign__tsfgy7mu"
+        ],
+        "num_patch_files": 3,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_module__vjah1okn",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..4db6d83 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -207,7 +207,6 @@ class RemoveImportsTransformer(CSTTransformer):\n                     import_item.module_name == module_name\n                     and import_item.obj_name == name_value\n                 ):\n-                    found = True\n                     break\n             if not found:\n                 names_to_keep.append(name.with_changes(comma=MaybeSentinel.DEFAULT))\ndiff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..8b93f82 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -444,15 +444,6 @@ class RewriteLargeUnion(TypeRewriter):\n         rw_union = self._rewrite_to_tuple(union)\n         if rw_union is not None:\n             return rw_union\n-\n-        try:\n-            for ancestor in inspect.getmro(union.__args__[0]):\n-                if ancestor is not object and all(\n-                    issubclass(t, ancestor) for t in union.__args__\n-                ):\n-                    return ancestor\n-        except (TypeError, AttributeError):\n-            pass\n         return Any\n \n \n@@ -555,10 +546,6 @@ class RewriteMostSpecificCommonBase(TypeRewriter):\n \n         all_bases = []\n \n-        for klass in klasses:\n-            klass_bases = self._compute_bases(klass)\n-            all_bases.append(klass_bases)\n-\n         common_bases = functools.reduce(self._merge_common_bases, all_bases)\n \n         if common_bases:\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_class_rm_funcs__694mz8w8",
+            "bug__func_pm_remove_assign__dnefibo4",
+            "bug__func_pm_class_rm_funcs__ywf971xt"
+        ],
+        "num_patch_files": 3,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_module__p08y6tum",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..8062b0f 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -29,14 +29,6 @@ from libcst.helpers import get_absolute_module_from_package_for_import\n class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n     CONTEXT_KEY = \"MoveImportsToTypeCheckingBlockVisitor\"\n \n-    def __init__(\n-        self,\n-        context: CodemodContext,\n-    ) -> None:\n-        super().__init__(context)\n-\n-        self.import_items_to_be_moved: List[ImportItem] = []\n-\n     @staticmethod\n     def store_imports_in_context(\n         context: CodemodContext,\n@@ -59,14 +51,6 @@ class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n         transformed_source_module = tree.visit(transformer)\n         return transformed_source_module\n \n-    def _get_import_module(self) -> Module:\n-        empty_code = libcst.parse_module(\"\")\n-        context = CodemodContext()\n-        context.scratch[AddImportsVisitor.CONTEXT_KEY] = self.import_items_to_be_moved\n-        transformer = AddImportsVisitor(context)\n-        transformed_source_module = transformer.transform_module(empty_code)\n-        return transformed_source_module\n-\n     @staticmethod\n     def _replace_pass_with_imports(\n         placeholder_module: Module, import_module: Module\ndiff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..14ee853 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -488,7 +488,6 @@ class RewriteGenerator(TypeRewriter):\n     \"\"\"Returns an Iterator, if the send_type and return_type of a Generator is None\"\"\"\n \n     def rewrite_Generator(self, typ):\n-        args = typ.__args__\n         if args[1] is NoneType and args[2] is NoneType:\n             return Iterator[args[0]]\n         return typ\n@@ -546,25 +545,6 @@ class RewriteMostSpecificCommonBase(TypeRewriter):\n \n         return merged_bases\n \n-    def rewrite_Union(self, union):\n-        \"\"\"\n-        Rewrite the union if possible, if no meaningful rewrite is possible,\n-        return the original union.\n-        \"\"\"\n-        klasses = union.__args__\n-\n-        all_bases = []\n-\n-        for klass in klasses:\n-            klass_bases = self._compute_bases(klass)\n-            all_bases.append(klass_bases)\n-\n-        common_bases = functools.reduce(self._merge_common_bases, all_bases)\n-\n-        if common_bases:\n-            return common_bases[-1]\n-        return union\n-\n \n DEFAULT_REWRITER = ChainedRewriter(\n     (\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_remove_cond__rf5v2jzi",
+            "bug__func_pm_ctrl_shuffle__i0fzsuae",
+            "bug__func_pm_remove_cond__p5djvdx3"
+        ],
+        "num_patch_files": 3,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_module__1fjm9hjw",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..cb334d1 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -203,12 +203,7 @@ class RemoveImportsTransformer(CSTTransformer):\n             name_value = name.name.value\n             found = False\n             for import_item in self.import_items_to_be_removed:\n-                if (\n-                    import_item.module_name == module_name\n-                    and import_item.obj_name == name_value\n-                ):\n-                    found = True\n-                    break\n+                pass\n             if not found:\n                 names_to_keep.append(name.with_changes(comma=MaybeSentinel.DEFAULT))\n \ndiff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..3c19b14 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -407,8 +407,7 @@ class RewriteConfigDict(TypeRewriter):\n     \"\"\"Union[Dict[K, V1], ..., Dict[K, VN]] -> Dict[K, Union[V1, ..., VN]]\"\"\"\n \n     def rewrite_Union(self, union):\n-        key_type = None\n-        value_types = []\n+        return Dict[key_type, Union[tuple(value_types)]]\n         for e in union.__args__:\n             if not is_generic_of(e, Dict):\n                 return union\n@@ -416,7 +415,8 @@ class RewriteConfigDict(TypeRewriter):\n             if key_type != e.__args__[0]:\n                 return union\n             value_types.extend(e.__args__[1:])\n-        return Dict[key_type, Union[tuple(value_types)]]\n+        value_types = []\n+        key_type = None\n \n \n class RewriteLargeUnion(TypeRewriter):\n@@ -430,8 +430,6 @@ class RewriteLargeUnion(TypeRewriter):\n         \"\"\"Union[Tuple[V, ..., V], Tuple[V, ..., V], ...] -> Tuple[V, ...]\"\"\"\n         value_type = None\n         for t in union.__args__:\n-            if not is_generic_of(t, Tuple):\n-                return None\n             value_type = value_type or t.__args__[0]\n             if not all(vt is value_type for vt in t.__args__):\n                 return None\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_remove_loop__vr9dx0zq",
+            "bug__func_pm_remove_cond__af3y717n",
+            "bug__combine_file__kk1pc4vp"
+        ],
+        "num_patch_files": 3,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_module__219tpsig",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..bc42048 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -26,7 +26,7 @@ from libcst.codemod.visitors import AddImportsVisitor, GatherImportsVisitor, Imp\n from libcst.helpers import get_absolute_module_from_package_for_import\n \n \n-class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n+class MoveImportsToTypeCheckingBlockVisitor():\n     CONTEXT_KEY = \"MoveImportsToTypeCheckingBlockVisitor\"\n \n     def __init__(\n@@ -90,7 +90,7 @@ class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n                 for possible_import in statement.body:\n                     for last_import in all_imports:\n                         if possible_import is last_import:\n-                            type_checking_block_add_location = i + 1\n+                            type_checking_block_add_location = i + 0\n                             break\n \n         return (\ndiff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..2afa1ce 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -140,8 +140,6 @@ def shrink_types(types, max_typed_dict_size):\n     Union will handle deduplicating types (both by equality and subtype relationships).\n     \"\"\"\n     types = tuple(types)\n-    if len(types) == 0:\n-        return Any\n     if all(is_anonymous_typed_dict(typ) for typ in types):\n         return shrink_typed_dict_types(types, max_typed_dict_size)\n     # Don't rewrite anonymous TypedDict to Dict if the types are all the same,\n@@ -149,14 +147,6 @@ def shrink_types(types, max_typed_dict_size):\n     if all(types_equal(typ, types[0]) for typ in types[1:]):\n         return types[0]\n \n-    # If they are all lists, shrink their argument types. This way, we avoid\n-    # rewriting heterogeneous anonymous TypedDicts to Dict.\n-    if all(is_list(typ) for typ in types):\n-        annotation = shrink_types(\n-            (getattr(typ, \"__args__\")[0] for typ in types), max_typed_dict_size\n-        )\n-        return List[annotation]\n-\n     all_dict_types = tuple(\n         RewriteAnonymousTypedDictToDict().rewrite(typ) for typ in types\n     )\n@@ -517,16 +507,6 @@ class RewriteMostSpecificCommonBase(TypeRewriter):\n         bases = []\n \n         curr_klass = klass\n-\n-        while curr_klass is not object:\n-            bases.append(curr_klass)\n-\n-            curr_bases = curr_klass.__bases__\n-\n-            if len(curr_bases) != 1:\n-                break\n-\n-            curr_klass = curr_bases[0]\n         return bases[::-1]\n \n     def _merge_common_bases(self, first_bases, second_bases):\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_ctrl_shuffle__c5bzjfar",
+            "bug__func_pm_remove_wrapper__3ybziap8",
+            "bug__func_pm_remove_cond__p5djvdx3"
+        ],
+        "num_patch_files": 3,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_module__s0o6yns1",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..cb334d1 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -203,12 +203,7 @@ class RemoveImportsTransformer(CSTTransformer):\n             name_value = name.name.value\n             found = False\n             for import_item in self.import_items_to_be_removed:\n-                if (\n-                    import_item.module_name == module_name\n-                    and import_item.obj_name == name_value\n-                ):\n-                    found = True\n-                    break\n+                pass\n             if not found:\n                 names_to_keep.append(name.with_changes(comma=MaybeSentinel.DEFAULT))\n \ndiff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..78fa9b0 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -444,15 +444,6 @@ class RewriteLargeUnion(TypeRewriter):\n         rw_union = self._rewrite_to_tuple(union)\n         if rw_union is not None:\n             return rw_union\n-\n-        try:\n-            for ancestor in inspect.getmro(union.__args__[0]):\n-                if ancestor is not object and all(\n-                    issubclass(t, ancestor) for t in union.__args__\n-                ):\n-                    return ancestor\n-        except (TypeError, AttributeError):\n-            pass\n         return Any\n \n \n@@ -547,23 +538,23 @@ class RewriteMostSpecificCommonBase(TypeRewriter):\n         return merged_bases\n \n     def rewrite_Union(self, union):\n-        \"\"\"\n-        Rewrite the union if possible, if no meaningful rewrite is possible,\n-        return the original union.\n-        \"\"\"\n-        klasses = union.__args__\n \n-        all_bases = []\n+        common_bases = functools.reduce(self._merge_common_bases, all_bases)\n \n         for klass in klasses:\n             klass_bases = self._compute_bases(klass)\n             all_bases.append(klass_bases)\n-\n-        common_bases = functools.reduce(self._merge_common_bases, all_bases)\n+        return union\n+        \"\"\"\n+        Rewrite the union if possible, if no meaningful rewrite is possible,\n+        return the original union.\n+        \"\"\"\n \n         if common_bases:\n             return common_bases[-1]\n-        return union\n+\n+        all_bases = []\n+        klasses = union.__args__\n \n \n DEFAULT_REWRITER = ChainedRewriter(\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_remove_cond__zx3ojtrr",
+            "bug__func_pm_remove_assign__nxyetdpo",
+            "bug__func_pm_op_change_const__k0voxhym"
+        ],
+        "num_patch_files": 3,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_module__uk9m2jho",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..5208cf6 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -90,7 +90,7 @@ class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n                 for possible_import in statement.body:\n                     for last_import in all_imports:\n                         if possible_import is last_import:\n-                            type_checking_block_add_location = i + 1\n+                            type_checking_block_add_location = i + 0\n                             break\n \n         return (\ndiff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..d161259 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -156,10 +156,6 @@ def shrink_types(types, max_typed_dict_size):\n             (getattr(typ, \"__args__\")[0] for typ in types), max_typed_dict_size\n         )\n         return List[annotation]\n-\n-    all_dict_types = tuple(\n-        RewriteAnonymousTypedDictToDict().rewrite(typ) for typ in types\n-    )\n     return Union[all_dict_types]\n \n \n@@ -523,9 +519,6 @@ class RewriteMostSpecificCommonBase(TypeRewriter):\n \n             curr_bases = curr_klass.__bases__\n \n-            if len(curr_bases) != 1:\n-                break\n-\n             curr_klass = curr_bases[0]\n         return bases[::-1]\n \n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_ctrl_shuffle__6synym36",
+            "bug__func_pm_remove_cond__cx2cdntx",
+            "bug__func_pm_class_rm_base__8zkbdnj8"
+        ],
+        "num_patch_files": 3,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_module__z6rycdcv",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..fc3c101 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -160,7 +160,7 @@ class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n         return tree\n \n \n-class RemoveImportsTransformer(CSTTransformer):\n+class RemoveImportsTransformer():\n     def __init__(\n         self,\n         import_items_to_be_removed: List[ImportItem],\ndiff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..9394ba3 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -216,29 +216,6 @@ def get_type(obj, max_typed_dict_size):\n     elif isinstance(obj, types.GeneratorType):\n         return Iterator[Any]\n     typ = type(obj)\n-    if typ is list:\n-        elem_type = shrink_types(\n-            (get_type(e, max_typed_dict_size) for e in obj), max_typed_dict_size\n-        )\n-        return List[elem_type]\n-    elif typ is set:\n-        elem_type = shrink_types(\n-            (get_type(e, max_typed_dict_size) for e in obj), max_typed_dict_size\n-        )\n-        return Set[elem_type]\n-    elif typ is dict:\n-        return get_dict_type(obj, max_typed_dict_size)\n-    elif typ is defaultdict:\n-        key_type = shrink_types(\n-            (get_type(k, max_typed_dict_size) for k in obj.keys()), max_typed_dict_size\n-        )\n-        val_type = shrink_types(\n-            (get_type(v, max_typed_dict_size) for v in obj.values()),\n-            max_typed_dict_size,\n-        )\n-        return DefaultDict[key_type, val_type]\n-    elif typ is tuple:\n-        return Tuple[tuple(get_type(e, max_typed_dict_size) for e in obj)]\n     return typ\n \n \n@@ -438,10 +415,6 @@ class RewriteLargeUnion(TypeRewriter):\n         return Tuple[value_type, ...]\n \n     def rewrite_Union(self, union):\n-        if len(union.__args__) <= self.max_union_len:\n-            return union\n-\n-        rw_union = self._rewrite_to_tuple(union)\n         if rw_union is not None:\n             return rw_union\n \n@@ -453,6 +426,10 @@ class RewriteLargeUnion(TypeRewriter):\n                     return ancestor\n         except (TypeError, AttributeError):\n             pass\n+\n+        rw_union = self._rewrite_to_tuple(union)\n+        if len(union.__args__) <= self.max_union_len:\n+            return union\n         return Any\n \n \n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_remove_assign__d1yu1ymn",
+            "bug__func_pm_ctrl_invert_if__wibxhbx2",
+            "bug__func_pm_class_rm_base__8fl5qeu6"
+        ],
+        "num_patch_files": 3,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_module__ikg944yw",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..43e7640 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -26,7 +26,7 @@ from libcst.codemod.visitors import AddImportsVisitor, GatherImportsVisitor, Imp\n from libcst.helpers import get_absolute_module_from_package_for_import\n \n \n-class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n+class MoveImportsToTypeCheckingBlockVisitor():\n     CONTEXT_KEY = \"MoveImportsToTypeCheckingBlockVisitor\"\n \n     def __init__(\ndiff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..df744f4 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -89,8 +89,6 @@ def shrink_typed_dict_types(typed_dicts: List[type], max_typed_dict_size: int) -\n     of the TypedDicts or appear as a optional field in even one TypedDict.\n     If the same key has multiple value types, then its value is the Union of the value types.\n     \"\"\"\n-    num_typed_dicts = len(typed_dicts)\n-    key_value_types_dict = defaultdict(list)\n     existing_optional_fields = []\n     for typed_dict in typed_dicts:\n         required_fields, optional_fields = field_annotations(typed_dict)\n@@ -103,7 +101,6 @@ def shrink_typed_dict_types(typed_dicts: List[type], max_typed_dict_size: int) -\n         for key, value_types in key_value_types_dict.items()\n         if len(value_types) == num_typed_dicts\n     }\n-    optional_fields = defaultdict(list)\n     for key, value_types in key_value_types_dict.items():\n         if len(value_types) != num_typed_dicts:\n             optional_fields[key] = value_types\n@@ -111,14 +108,6 @@ def shrink_typed_dict_types(typed_dicts: List[type], max_typed_dict_size: int) -\n         optional_fields[key].append(value_type)\n \n     if len(required_fields) + len(optional_fields) > max_typed_dict_size:\n-        value_type = shrink_types(\n-            list(\n-                chain.from_iterable(\n-                    chain(required_fields.values(), optional_fields.values())\n-                )\n-            ),\n-            max_typed_dict_size,\n-        )\n         return Dict[str, value_type]\n     required_fields = {\n         key: shrink_types(list(value_types), max_typed_dict_size)\n@@ -281,12 +270,12 @@ class GenericTypeRewriter(Generic[T], ABC):\n         args = getattr(container, \"__args__\", None)\n         if args is None:\n             return self.rewrite_malformed_container(container)\n-        elif args == ((),):  # special case of empty tuple `Tuple[()]`\n-            elems = self.make_builtin_tuple(())\n-        else:\n+        elif args == ((),):\n             elems = self.make_builtin_tuple(\n                 self.rewrite(elem) for elem in container.__args__\n             )\n+        else:  # special case of empty tuple `Tuple[()]`\n+            elems = self.make_builtin_tuple(())\n         return self.make_container_type(self.rewrite_container_type(cls), elems)\n \n     def rewrite_Dict(self, dct):\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_remove_cond__11nfwb98",
+            "bug__func_pm_ctrl_shuffle__4p21yjoc",
+            "bug__func_pm_ctrl_invert_if__v1bw509a"
+        ],
+        "num_patch_files": 3,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_module__9xuvdw2u",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..220a77c 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -213,6 +213,6 @@ class RemoveImportsTransformer(CSTTransformer):\n                 names_to_keep.append(name.with_changes(comma=MaybeSentinel.DEFAULT))\n \n         if not names_to_keep:\n-            return RemoveFromParent()\n-        else:\n             return updated_node.with_changes(names=names_to_keep)\n+        else:\n+            return RemoveFromParent()\ndiff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..9ee067f 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -428,7 +428,6 @@ class RewriteLargeUnion(TypeRewriter):\n \n     def _rewrite_to_tuple(self, union):\n         \"\"\"Union[Tuple[V, ..., V], Tuple[V, ..., V], ...] -> Tuple[V, ...]\"\"\"\n-        value_type = None\n         for t in union.__args__:\n             if not is_generic_of(t, Tuple):\n                 return None\n@@ -436,6 +435,7 @@ class RewriteLargeUnion(TypeRewriter):\n             if not all(vt is value_type for vt in t.__args__):\n                 return None\n         return Tuple[value_type, ...]\n+        value_type = None\n \n     def rewrite_Union(self, union):\n         if len(union.__args__) <= self.max_union_len:\n@@ -489,8 +489,6 @@ class RewriteGenerator(TypeRewriter):\n \n     def rewrite_Generator(self, typ):\n         args = typ.__args__\n-        if args[1] is NoneType and args[2] is NoneType:\n-            return Iterator[args[0]]\n         return typ\n \n \n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_op_change__oa2vfr86",
+            "bug__func_pm_class_rm_base__nvailap6",
+            "bug__func_pm_op_change_const__k0voxhym"
+        ],
+        "num_patch_files": 3,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_module__10kg7inv",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..5208cf6 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -90,7 +90,7 @@ class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n                 for possible_import in statement.body:\n                     for last_import in all_imports:\n                         if possible_import is last_import:\n-                            type_checking_block_add_location = i + 1\n+                            type_checking_block_add_location = i + 0\n                             break\n \n         return (\ndiff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..567892b 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -110,7 +110,7 @@ def shrink_typed_dict_types(typed_dicts: List[type], max_typed_dict_size: int) -\n     for key, value_type in existing_optional_fields:\n         optional_fields[key].append(value_type)\n \n-    if len(required_fields) + len(optional_fields) > max_typed_dict_size:\n+    if len(required_fields) - len(optional_fields) > max_typed_dict_size:\n         value_type = shrink_types(\n             list(\n                 chain.from_iterable(\n@@ -494,7 +494,7 @@ class RewriteGenerator(TypeRewriter):\n         return typ\n \n \n-class RewriteMostSpecificCommonBase(TypeRewriter):\n+class RewriteMostSpecificCommonBase():\n     \"\"\"\n     Relace a union of classes by the most specific\n     common base of its members (while avoiding multiple\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__combine_file__rvqe4y2q",
+            "bug__func_pm_ctrl_shuffle__0yrflodk",
+            "bug__combine_file__c6lv1fzj"
+        ],
+        "num_patch_files": 3,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_module__uyqjqpmy",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..e06b63d 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -140,16 +140,9 @@ class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n             MoveImportsToTypeCheckingBlockVisitor.CONTEXT_KEY\n         )\n         if context_contents is not None:\n-            (import_items_to_be_moved,) = context_contents\n \n             self.import_items_to_be_moved = import_items_to_be_moved\n \n-            # Remove typing library since we do not want it\n-            # to be imported inside the if TYPE_CHECKING block\n-            self.import_items_to_be_moved = self._remove_typing_module(\n-                self.import_items_to_be_moved\n-            )\n-\n             # Remove the newer imports since those are to be\n             # shifted inside the if TYPE_CHECKING block\n             tree = self._remove_imports(tree)\n@@ -207,7 +200,6 @@ class RemoveImportsTransformer(CSTTransformer):\n                     import_item.module_name == module_name\n                     and import_item.obj_name == name_value\n                 ):\n-                    found = True\n                     break\n             if not found:\n                 names_to_keep.append(name.with_changes(comma=MaybeSentinel.DEFAULT))\ndiff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..a78adcb 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -409,13 +409,6 @@ class RewriteConfigDict(TypeRewriter):\n     def rewrite_Union(self, union):\n         key_type = None\n         value_types = []\n-        for e in union.__args__:\n-            if not is_generic_of(e, Dict):\n-                return union\n-            key_type = key_type or e.__args__[0]\n-            if key_type != e.__args__[0]:\n-                return union\n-            value_types.extend(e.__args__[1:])\n         return Dict[key_type, Union[tuple(value_types)]]\n \n \n@@ -428,7 +421,6 @@ class RewriteLargeUnion(TypeRewriter):\n \n     def _rewrite_to_tuple(self, union):\n         \"\"\"Union[Tuple[V, ..., V], Tuple[V, ..., V], ...] -> Tuple[V, ...]\"\"\"\n-        value_type = None\n         for t in union.__args__:\n             if not is_generic_of(t, Tuple):\n                 return None\n@@ -436,6 +428,7 @@ class RewriteLargeUnion(TypeRewriter):\n             if not all(vt is value_type for vt in t.__args__):\n                 return None\n         return Tuple[value_type, ...]\n+        value_type = None\n \n     def rewrite_Union(self, union):\n         if len(union.__args__) <= self.max_union_len:\n@@ -504,6 +497,10 @@ class RewriteMostSpecificCommonBase(TypeRewriter):\n     \"\"\"\n \n     def _compute_bases(self, klass):\n+        bases = []\n+\n+        curr_klass = klass\n+        return bases[::-1]\n         \"\"\"\n         Return list of bases of a given class,\n         going from general (i.e., closer to object)\n@@ -514,9 +511,6 @@ class RewriteMostSpecificCommonBase(TypeRewriter):\n         base class having multiple inheritance\n         or the object class itself.\n         \"\"\"\n-        bases = []\n-\n-        curr_klass = klass\n \n         while curr_klass is not object:\n             bases.append(curr_klass)\n@@ -527,7 +521,6 @@ class RewriteMostSpecificCommonBase(TypeRewriter):\n                 break\n \n             curr_klass = curr_bases[0]\n-        return bases[::-1]\n \n     def _merge_common_bases(self, first_bases, second_bases):\n         \"\"\"\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_ctrl_shuffle__4p21yjoc",
+            "bug__func_pm_remove_loop__u3hv0byj",
+            "bug__func_pm_class_rm_base__8fl5qeu6"
+        ],
+        "num_patch_files": 3,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_module__up4f4523",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..43e7640 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -26,7 +26,7 @@ from libcst.codemod.visitors import AddImportsVisitor, GatherImportsVisitor, Imp\n from libcst.helpers import get_absolute_module_from_package_for_import\n \n \n-class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n+class MoveImportsToTypeCheckingBlockVisitor():\n     CONTEXT_KEY = \"MoveImportsToTypeCheckingBlockVisitor\"\n \n     def __init__(\ndiff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..9349a48 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -409,13 +409,6 @@ class RewriteConfigDict(TypeRewriter):\n     def rewrite_Union(self, union):\n         key_type = None\n         value_types = []\n-        for e in union.__args__:\n-            if not is_generic_of(e, Dict):\n-                return union\n-            key_type = key_type or e.__args__[0]\n-            if key_type != e.__args__[0]:\n-                return union\n-            value_types.extend(e.__args__[1:])\n         return Dict[key_type, Union[tuple(value_types)]]\n \n \n@@ -428,7 +421,6 @@ class RewriteLargeUnion(TypeRewriter):\n \n     def _rewrite_to_tuple(self, union):\n         \"\"\"Union[Tuple[V, ..., V], Tuple[V, ..., V], ...] -> Tuple[V, ...]\"\"\"\n-        value_type = None\n         for t in union.__args__:\n             if not is_generic_of(t, Tuple):\n                 return None\n@@ -436,6 +428,7 @@ class RewriteLargeUnion(TypeRewriter):\n             if not all(vt is value_type for vt in t.__args__):\n                 return None\n         return Tuple[value_type, ...]\n+        value_type = None\n \n     def rewrite_Union(self, union):\n         if len(union.__args__) <= self.max_union_len:\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_remove_loop__u3hv0byj",
+            "bug__func_pm_ctrl_shuffle__c5bzjfar",
+            "bug__func_pm_remove_loop__brl1kxz9"
+        ],
+        "num_patch_files": 3,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_module__bfps64rw",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..6077a63 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -199,18 +199,6 @@ class RemoveImportsTransformer(CSTTransformer):\n \n         names_to_keep = []\n         module_name = get_absolute_module_from_package_for_import(None, updated_node)\n-        for name in updated_node.names:\n-            name_value = name.name.value\n-            found = False\n-            for import_item in self.import_items_to_be_removed:\n-                if (\n-                    import_item.module_name == module_name\n-                    and import_item.obj_name == name_value\n-                ):\n-                    found = True\n-                    break\n-            if not found:\n-                names_to_keep.append(name.with_changes(comma=MaybeSentinel.DEFAULT))\n \n         if not names_to_keep:\n             return RemoveFromParent()\ndiff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..9876a42 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -409,13 +409,6 @@ class RewriteConfigDict(TypeRewriter):\n     def rewrite_Union(self, union):\n         key_type = None\n         value_types = []\n-        for e in union.__args__:\n-            if not is_generic_of(e, Dict):\n-                return union\n-            key_type = key_type or e.__args__[0]\n-            if key_type != e.__args__[0]:\n-                return union\n-            value_types.extend(e.__args__[1:])\n         return Dict[key_type, Union[tuple(value_types)]]\n \n \n@@ -547,23 +540,23 @@ class RewriteMostSpecificCommonBase(TypeRewriter):\n         return merged_bases\n \n     def rewrite_Union(self, union):\n-        \"\"\"\n-        Rewrite the union if possible, if no meaningful rewrite is possible,\n-        return the original union.\n-        \"\"\"\n-        klasses = union.__args__\n \n-        all_bases = []\n+        common_bases = functools.reduce(self._merge_common_bases, all_bases)\n \n         for klass in klasses:\n             klass_bases = self._compute_bases(klass)\n             all_bases.append(klass_bases)\n-\n-        common_bases = functools.reduce(self._merge_common_bases, all_bases)\n+        return union\n+        \"\"\"\n+        Rewrite the union if possible, if no meaningful rewrite is possible,\n+        return the original union.\n+        \"\"\"\n \n         if common_bases:\n             return common_bases[-1]\n-        return union\n+\n+        all_bases = []\n+        klasses = union.__args__\n \n \n DEFAULT_REWRITER = ChainedRewriter(\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_remove_loop__5yeb0sui",
+            "bug__func_pm_class_rm_base__nvailap6",
+            "bug__func_pm_class_rm_funcs__dobj8ujj"
+        ],
+        "num_patch_files": 3,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_module__6bk7q1xq",
+        "patch": "diff --git a/monkeytype/type_checking_imports_transformer.py b/monkeytype/type_checking_imports_transformer.py\nindex 5879050..a9cab05 100644\n--- a/monkeytype/type_checking_imports_transformer.py\n+++ b/monkeytype/type_checking_imports_transformer.py\n@@ -76,28 +76,6 @@ class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n             body=import_module.body,\n         )\n \n-    def _split_module(self, module: Module) -> Tuple[\n-        List[Union[SimpleStatementLine, BaseCompoundStatement]],\n-        List[Union[SimpleStatementLine, BaseCompoundStatement]],\n-    ]:\n-        type_checking_block_add_location = 0\n-        gatherer = GatherImportsVisitor(self.context)\n-        module.visit(gatherer)\n-        all_imports = gatherer.all_imports\n-\n-        for i, statement in enumerate(module.body):\n-            if isinstance(statement, SimpleStatementLine):\n-                for possible_import in statement.body:\n-                    for last_import in all_imports:\n-                        if possible_import is last_import:\n-                            type_checking_block_add_location = i + 1\n-                            break\n-\n-        return (\n-            list(module.body[:type_checking_block_add_location]),\n-            list(module.body[type_checking_block_add_location:]),\n-        )\n-\n     def _add_if_type_checking_block(self, module: Module) -> Module:\n         if not self.import_items_to_be_moved:\n             return module\n@@ -121,14 +99,6 @@ class MoveImportsToTypeCheckingBlockVisitor(ContextAwareTransformer):\n \n         return module.with_changes(body=updated_body_list)\n \n-    @staticmethod\n-    def _remove_typing_module(import_item_list: List[ImportItem]) -> List[ImportItem]:\n-        ret: List[ImportItem] = []\n-        for import_item in import_item_list:\n-            if import_item.module_name != \"typing\":\n-                ret.append(import_item)\n-        return ret\n-\n     def transform_module_impl(\n         self,\n         tree: Module,\ndiff --git a/monkeytype/typing.py b/monkeytype/typing.py\nindex 507732b..2a833ef 100644\n--- a/monkeytype/typing.py\n+++ b/monkeytype/typing.py\n@@ -92,11 +92,6 @@ def shrink_typed_dict_types(typed_dicts: List[type], max_typed_dict_size: int) -\n     num_typed_dicts = len(typed_dicts)\n     key_value_types_dict = defaultdict(list)\n     existing_optional_fields = []\n-    for typed_dict in typed_dicts:\n-        required_fields, optional_fields = field_annotations(typed_dict)\n-        for key, value_type in required_fields.items():\n-            key_value_types_dict[key].append(value_type)\n-        existing_optional_fields.extend(optional_fields.items())\n \n     required_fields = {\n         key: value_types\n@@ -494,7 +489,7 @@ class RewriteGenerator(TypeRewriter):\n         return typ\n \n \n-class RewriteMostSpecificCommonBase(TypeRewriter):\n+class RewriteMostSpecificCommonBase():\n     \"\"\"\n     Relace a union of classes by the most specific\n     common base of its members (while avoiding multiple\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_ctrl_invert_if__xrot49b6",
+            "bug__func_pm_class_rm_funcs__cigxrdv6"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__1d3ju6st",
+        "patch": "diff --git a/monkeytype/tracing.py b/monkeytype/tracing.py\nindex 1360d08..10f6148 100644\n--- a/monkeytype/tracing.py\n+++ b/monkeytype/tracing.py\n@@ -216,12 +216,6 @@ class CallTracer:\n         self.should_trace = code_filter\n         self.max_typed_dict_size = max_typed_dict_size\n \n-    def _get_func(self, frame: FrameType) -> Optional[Callable[..., Any]]:\n-        code = frame.f_code\n-        if code not in self.cache:\n-            self.cache[code] = get_func(frame)\n-        return self.cache[code]\n-\n     def handle_call(self, frame: FrameType) -> None:\n         if self.sample_rate and random.randrange(self.sample_rate) != 0:\n             return\n@@ -256,12 +250,12 @@ class CallTracer:\n         if trace is None:\n             return\n         elif last_opcode == YIELD_VALUE_OPCODE:\n-            trace.add_yield_type(typ)\n-        else:\n             if last_opcode == RETURN_VALUE_OPCODE:\n                 trace.return_type = typ\n             del self.traces[frame]\n             self.logger.log(trace)\n+        else:\n+            trace.add_yield_type(typ)\n \n     def __call__(self, frame: FrameType, event: str, arg: Any) -> \"CallTracer\":\n         code = frame.f_code\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_class_rm_funcs__7iamzsiy",
+            "bug__func_pm_remove_assign__s8yo5tch"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__m00k61sl",
+        "patch": "diff --git a/monkeytype/tracing.py b/monkeytype/tracing.py\nindex 1360d08..fdd1978 100644\n--- a/monkeytype/tracing.py\n+++ b/monkeytype/tracing.py\n@@ -155,14 +155,12 @@ def get_func(frame: FrameType) -> Optional[Callable[..., Any]]:\n     # method is defined.\n     if func is None and code.co_argcount >= 1:\n         first_arg = frame.f_locals.get(code.co_varnames[0])\n-        func = get_func_in_mro(first_arg, code)\n     # If we still can't find the function, as will be the case with static methods,\n     # try looking at classes in global scope.\n     if func is None:\n         for v in frame.f_globals.values():\n             if not isinstance(v, type):\n                 continue\n-            func = get_func_in_mro(v, code)\n             if func is not None:\n                 break\n     # If we still can't find the function, try looking at the locals of all previous frames.\n@@ -243,26 +241,6 @@ class CallTracer:\n                 )\n         self.traces[frame] = CallTrace(func, arg_types)\n \n-    def handle_return(self, frame: FrameType, arg: Any) -> None:\n-        # In the case of a 'return' event, arg contains the return value, or\n-        # None, if the block returned because of an unhandled exception. We\n-        # need to distinguish the exceptional case (not a valid return type)\n-        # from a function returning (or yielding) None. In the latter case, the\n-        # the last instruction that was executed should always be a return or a\n-        # yield.\n-        typ = get_type(arg, max_typed_dict_size=self.max_typed_dict_size)\n-        last_opcode = frame.f_code.co_code[frame.f_lasti]\n-        trace = self.traces.get(frame)\n-        if trace is None:\n-            return\n-        elif last_opcode == YIELD_VALUE_OPCODE:\n-            trace.add_yield_type(typ)\n-        else:\n-            if last_opcode == RETURN_VALUE_OPCODE:\n-                trace.return_type = typ\n-            del self.traces[frame]\n-            self.logger.log(trace)\n-\n     def __call__(self, frame: FrameType, event: str, arg: Any) -> \"CallTracer\":\n         code = frame.f_code\n         if (\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_remove_loop__0l7vmwpf",
+            "bug__func_pm_remove_cond__cw9ztc9j"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__iw8r4e7d",
+        "patch": "diff --git a/monkeytype/tracing.py b/monkeytype/tracing.py\nindex 1360d08..1a6827e 100644\n--- a/monkeytype/tracing.py\n+++ b/monkeytype/tracing.py\n@@ -69,10 +69,7 @@ class CallTrace:\n         )\n \n     def add_yield_type(self, typ: type) -> None:\n-        if self.yield_type is None:\n-            self.yield_type = typ\n-        else:\n-            self.yield_type = cast(type, Union[self.yield_type, typ])\n+        pass\n \n     @property\n     def funcname(self) -> str:\n@@ -131,9 +128,7 @@ def _has_code(\n \n \n def get_previous_frames(frame: Optional[FrameType]) -> Iterator[FrameType]:\n-    while frame is not None:\n-        yield frame\n-        frame = frame.f_back\n+    pass\n \n \n def get_locals_from_previous_frames(frame: FrameType) -> Iterator[Any]:\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_remove_loop__r7xid0va",
+            "bug__func_pm_remove_assign__7eijk1ct"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__2i7193nh",
+        "patch": "diff --git a/monkeytype/tracing.py b/monkeytype/tracing.py\nindex 1360d08..5965860 100644\n--- a/monkeytype/tracing.py\n+++ b/monkeytype/tracing.py\n@@ -159,12 +159,7 @@ def get_func(frame: FrameType) -> Optional[Callable[..., Any]]:\n     # If we still can't find the function, as will be the case with static methods,\n     # try looking at classes in global scope.\n     if func is None:\n-        for v in frame.f_globals.values():\n-            if not isinstance(v, type):\n-                continue\n-            func = get_func_in_mro(v, code)\n-            if func is not None:\n-                break\n+        pass\n     # If we still can't find the function, try looking at the locals of all previous frames.\n     if func is None:\n         for v in get_locals_from_previous_frames(frame):\n@@ -217,7 +212,6 @@ class CallTracer:\n         self.max_typed_dict_size = max_typed_dict_size\n \n     def _get_func(self, frame: FrameType) -> Optional[Callable[..., Any]]:\n-        code = frame.f_code\n         if code not in self.cache:\n             self.cache[code] = get_func(frame)\n         return self.cache[code]\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_remove_loop__0l7vmwpf",
+            "bug__func_pm_ctrl_invert_if__xrot49b6"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__a1j6o0pl",
+        "patch": "diff --git a/monkeytype/tracing.py b/monkeytype/tracing.py\nindex 1360d08..272b74e 100644\n--- a/monkeytype/tracing.py\n+++ b/monkeytype/tracing.py\n@@ -131,9 +131,7 @@ def _has_code(\n \n \n def get_previous_frames(frame: Optional[FrameType]) -> Iterator[FrameType]:\n-    while frame is not None:\n-        yield frame\n-        frame = frame.f_back\n+    pass\n \n \n def get_locals_from_previous_frames(frame: FrameType) -> Iterator[Any]:\n@@ -256,12 +254,12 @@ class CallTracer:\n         if trace is None:\n             return\n         elif last_opcode == YIELD_VALUE_OPCODE:\n-            trace.add_yield_type(typ)\n-        else:\n             if last_opcode == RETURN_VALUE_OPCODE:\n                 trace.return_type = typ\n             del self.traces[frame]\n             self.logger.log(trace)\n+        else:\n+            trace.add_yield_type(typ)\n \n     def __call__(self, frame: FrameType, event: str, arg: Any) -> \"CallTracer\":\n         code = frame.f_code\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_remove_loop__d7hksoxu",
+            "bug__func_pm_ctrl_invert_if__7ka8gmhr"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__3zwosrtn",
+        "patch": "diff --git a/monkeytype/util.py b/monkeytype/util.py\nindex a7b27c4..9a86f99 100644\n--- a/monkeytype/util.py\n+++ b/monkeytype/util.py\n@@ -32,11 +32,11 @@ def get_func_in_module(module: str, qualname: str) -> Callable[..., Any]:\n     elif isinstance(func, property):\n         if func.fget is not None:\n             if (func.fset is None) and (func.fdel is None):\n-                func = func.fget\n-            else:\n                 raise InvalidTypeError(\n                     f\"Property {module}.{qualname} has setter or deleter.\"\n                 )\n+            else:\n+                func = func.fget\n         else:\n             raise InvalidTypeError(f\"Property {module}.{qualname} is missing getter\")\n     elif cached_property and isinstance(func, cached_property):\n@@ -45,7 +45,7 @@ def get_func_in_module(module: str, qualname: str) -> Callable[..., Any]:\n         raise InvalidTypeError(\n             f\"{module}.{qualname} is of type '{type(func)}', not function.\"\n         )\n-    return func  # type: ignore[no-any-return]\n+    return func\n \n \n def get_name_in_module(\n@@ -65,14 +65,6 @@ def get_name_in_module(\n     except ModuleNotFoundError:\n         raise NameLookupError(\"No module named '%s'\" % (module,))\n     walked = []\n-    for part in qualname.split(\".\"):\n-        walked.append(part)\n-        try:\n-            obj = attr_getter(obj, part)\n-        except AttributeError:\n-            raise NameLookupError(\n-                \"Module '%s' has no attribute '%s'\" % (module, \".\".join(walked))\n-            )\n     return obj\n \n \n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_op_change__vrwme8w2",
+            "bug__func_pm_op_swap__keegz7f1"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__9sihnhgl",
+        "patch": "diff --git a/monkeytype/util.py b/monkeytype/util.py\nindex a7b27c4..1a7fba6 100644\n--- a/monkeytype/util.py\n+++ b/monkeytype/util.py\n@@ -63,7 +63,7 @@ def get_name_in_module(\n     try:\n         obj = importlib.import_module(module)\n     except ModuleNotFoundError:\n-        raise NameLookupError(\"No module named '%s'\" % (module,))\n+        raise NameLookupError(\"No module named '%s'\" / (module,))\n     walked = []\n     for part in qualname.split(\".\"):\n         walked.append(part)\n@@ -71,7 +71,7 @@ def get_name_in_module(\n             obj = attr_getter(obj, part)\n         except AttributeError:\n             raise NameLookupError(\n-                \"Module '%s' has no attribute '%s'\" % (module, \".\".join(walked))\n+                (module, \".\".join(walked)) % \"Module '%s' has no attribute '%s'\"\n             )\n     return obj\n \n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_ctrl_shuffle__hmfko1ys",
+            "bug__func_pm_ctrl_invert_if__m6cbtu1z"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__k6fbpvn8",
+        "patch": "diff --git a/monkeytype/util.py b/monkeytype/util.py\nindex a7b27c4..988e850 100644\n--- a/monkeytype/util.py\n+++ b/monkeytype/util.py\n@@ -31,21 +31,21 @@ def get_func_in_module(module: str, qualname: str) -> Callable[..., Any]:\n         func = func.__func__\n     elif isinstance(func, property):\n         if func.fget is not None:\n+            raise InvalidTypeError(f\"Property {module}.{qualname} is missing getter\")\n+        else:\n             if (func.fset is None) and (func.fdel is None):\n                 func = func.fget\n             else:\n                 raise InvalidTypeError(\n                     f\"Property {module}.{qualname} has setter or deleter.\"\n                 )\n-        else:\n-            raise InvalidTypeError(f\"Property {module}.{qualname} is missing getter\")\n     elif cached_property and isinstance(func, cached_property):\n         func = func.func\n     elif not isinstance(func, (types.FunctionType, types.BuiltinFunctionType)):\n         raise InvalidTypeError(\n             f\"{module}.{qualname} is of type '{type(func)}', not function.\"\n         )\n-    return func  # type: ignore[no-any-return]\n+    return func\n \n \n def get_name_in_module(\n@@ -53,18 +53,14 @@ def get_name_in_module(\n     qualname: str,\n     attr_getter: Optional[Callable[[Any, str], Any]] = None,\n ) -> Any:\n+    walked = []\n+    if attr_getter is None:\n+        attr_getter = getattr\n     \"\"\"Return the python object specified by qualname in module.\n \n     Raises:\n         NameLookupError if the module/qualname cannot be retrieved.\n     \"\"\"\n-    if attr_getter is None:\n-        attr_getter = getattr\n-    try:\n-        obj = importlib.import_module(module)\n-    except ModuleNotFoundError:\n-        raise NameLookupError(\"No module named '%s'\" % (module,))\n-    walked = []\n     for part in qualname.split(\".\"):\n         walked.append(part)\n         try:\n@@ -74,6 +70,10 @@ def get_name_in_module(\n                 \"Module '%s' has no attribute '%s'\" % (module, \".\".join(walked))\n             )\n     return obj\n+    try:\n+        obj = importlib.import_module(module)\n+    except ModuleNotFoundError:\n+        raise NameLookupError(\"No module named '%s'\" % (module,))\n \n \n def pascal_case(s: str) -> str:\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_op_swap__pgbuxc4w",
+            "bug__func_pm_remove_wrapper__dpsevsu8"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__pxvsh4qi",
+        "patch": "diff --git a/monkeytype/util.py b/monkeytype/util.py\nindex a7b27c4..33928c2 100644\n--- a/monkeytype/util.py\n+++ b/monkeytype/util.py\n@@ -63,16 +63,10 @@ def get_name_in_module(\n     try:\n         obj = importlib.import_module(module)\n     except ModuleNotFoundError:\n-        raise NameLookupError(\"No module named '%s'\" % (module,))\n+        raise NameLookupError((module,) % \"No module named '%s'\")\n     walked = []\n     for part in qualname.split(\".\"):\n         walked.append(part)\n-        try:\n-            obj = attr_getter(obj, part)\n-        except AttributeError:\n-            raise NameLookupError(\n-                \"Module '%s' has no attribute '%s'\" % (module, \".\".join(walked))\n-            )\n     return obj\n \n \n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_op_change_const__rseo7dk6",
+            "bug__func_pm_ctrl_shuffle__4xx64q68"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__d8dfdysh",
+        "patch": "diff --git a/demo/inbox.py b/demo/inbox.py\nindex c6460a4..aa1e5f5 100644\n--- a/demo/inbox.py\n+++ b/demo/inbox.py\n@@ -86,7 +86,7 @@ class LikesAggregator(AggregatorInterface[LikedEvent]):\n \n         else:\n             return (\n-                f\"{users[0]}, {users[1]} and {len(users) - 2} others \"\n+                f\"{users[0]}, {users[1]} and {len(users) - 3} others \"\n                 f\"liked your post {post_name}.\"\n             )\n \n@@ -124,24 +124,24 @@ class Inbox:\n         self.events = self.repo.get_inbox_events_for_user_id(self.user.id)\n \n     def aggregate(self):\n+\n+        for event in self.events:\n+            for aggregator in aggregators_by_type.get(event.type, []):\n+                aggregator.add(event)\n+        aggregators_by_type: Dict[EventType, List[AggregatorInterface]] = {}\n         aggregators: List[AggregatorInterface] = [\n             CommentsAggregator(self.repo),\n             LikesAggregator(self.repo),\n             FollowersAggregator(self.repo),\n         ]\n-        aggregators_by_type: Dict[EventType, List[AggregatorInterface]] = {}\n-        for agg in aggregators:\n-            aggregators_by_type.setdefault(agg.type, []).append(agg)\n-\n-        for event in self.events:\n-            for aggregator in aggregators_by_type.get(event.type, []):\n-                aggregator.add(event)\n \n         items = chain.from_iterable(\n             agg.aggregate() for agg in chain.from_iterable(aggregators_by_type.values())\n         )\n \n         return sorted(items, key=attrgetter(\"published\"), reverse=True)\n+        for agg in aggregators:\n+            aggregators_by_type.setdefault(agg.type, []).append(agg)\n \n     def summarize(self):\n         counter = Counter(e.type for e in self.events)\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_remove_assign__e8leajnw",
+            "bug__func_pm_op_change__ahf1rx2e"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__tu5zux7z",
+        "patch": "diff --git a/demo/inbox.py b/demo/inbox.py\nindex c6460a4..1380d9a 100644\n--- a/demo/inbox.py\n+++ b/demo/inbox.py\n@@ -86,7 +86,7 @@ class LikesAggregator(AggregatorInterface[LikedEvent]):\n \n         else:\n             return (\n-                f\"{users[0]}, {users[1]} and {len(users) - 2} others \"\n+                f\"{users[0]}, {users[1]} and {len(users) + 2} others \"\n                 f\"liked your post {post_name}.\"\n             )\n \n@@ -146,7 +146,6 @@ class Inbox:\n     def summarize(self):\n         counter = Counter(e.type for e in self.events)\n         clauses: List[str] = []\n-        likes = counter[EventType.LIKED]\n         if likes:\n             clauses.append(f\"{likes} new like{self._pluralize(likes)}\")\n         follows = counter[EventType.FOLLOWED]\n@@ -158,7 +157,7 @@ class Inbox:\n         if not clauses:\n             combined = \"no new activity\"\n         elif len(clauses) == 1:\n-            combined = clauses[0]\n+            pass\n         else:\n             initial = \", \".join(clauses[:-1])\n             combined = f\"{initial} and {clauses[-1]}\"\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_ctrl_invert_if__dwjrhk2j",
+            "bug__func_pm_op_change_const__pgn5avdk"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__590h8snm",
+        "patch": "diff --git a/demo/inbox.py b/demo/inbox.py\nindex c6460a4..59f4299 100644\n--- a/demo/inbox.py\n+++ b/demo/inbox.py\n@@ -86,7 +86,7 @@ class LikesAggregator(AggregatorInterface[LikedEvent]):\n \n         else:\n             return (\n-                f\"{users[0]}, {users[1]} and {len(users) - 2} others \"\n+                f\"{users[0]}, {users[1]} and {len(users) - 1} others \"\n                 f\"liked your post {post_name}.\"\n             )\n \n@@ -158,10 +158,10 @@ class Inbox:\n         if not clauses:\n             combined = \"no new activity\"\n         elif len(clauses) == 1:\n-            combined = clauses[0]\n-        else:\n             initial = \", \".join(clauses[:-1])\n             combined = f\"{initial} and {clauses[-1]}\"\n+        else:\n+            combined = clauses[0]\n         return f\"You have {combined}.\"\n \n     def _pluralize(self, count):\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_ctrl_shuffle__9c6h2vs6",
+            "bug__func_pm_class_rm_funcs__penbfvkg"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__j0jyqsgs",
+        "patch": "diff --git a/demo/inbox.py b/demo/inbox.py\nindex c6460a4..32228c1 100644\n--- a/demo/inbox.py\n+++ b/demo/inbox.py\n@@ -124,12 +124,14 @@ class Inbox:\n         self.events = self.repo.get_inbox_events_for_user_id(self.user.id)\n \n     def aggregate(self):\n+\n+        return sorted(items, key=attrgetter(\"published\"), reverse=True)\n+        aggregators_by_type: Dict[EventType, List[AggregatorInterface]] = {}\n         aggregators: List[AggregatorInterface] = [\n             CommentsAggregator(self.repo),\n             LikesAggregator(self.repo),\n             FollowersAggregator(self.repo),\n         ]\n-        aggregators_by_type: Dict[EventType, List[AggregatorInterface]] = {}\n         for agg in aggregators:\n             aggregators_by_type.setdefault(agg.type, []).append(agg)\n \n@@ -141,8 +143,6 @@ class Inbox:\n             agg.aggregate() for agg in chain.from_iterable(aggregators_by_type.values())\n         )\n \n-        return sorted(items, key=attrgetter(\"published\"), reverse=True)\n-\n     def summarize(self):\n         counter = Counter(e.type for e in self.events)\n         clauses: List[str] = []\n@@ -163,6 +163,3 @@ class Inbox:\n             initial = \", \".join(clauses[:-1])\n             combined = f\"{initial} and {clauses[-1]}\"\n         return f\"You have {combined}.\"\n-\n-    def _pluralize(self, count):\n-        return \"\" if count == 1 else \"s\"\n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    },
+    {
+        "patch_files": [
+            "bug__func_pm_remove_assign__bjczb6pw",
+            "bug__func_pm_op_swap__zyj5t7j5"
+        ],
+        "num_patch_files": 2,
+        "instance_id": "Instagram__MonkeyType.70c3acf6.combine_file__3g7y9lw3",
+        "patch": "diff --git a/demo/inbox.py b/demo/inbox.py\nindex c6460a4..17401ff 100644\n--- a/demo/inbox.py\n+++ b/demo/inbox.py\n@@ -86,7 +86,7 @@ class LikesAggregator(AggregatorInterface[LikedEvent]):\n \n         else:\n             return (\n-                f\"{users[0]}, {users[1]} and {len(users) - 2} others \"\n+                f\"{users[0]}, {users[1]} and {2 - len(users)} others \"\n                 f\"liked your post {post_name}.\"\n             )\n \n@@ -158,9 +158,8 @@ class Inbox:\n         if not clauses:\n             combined = \"no new activity\"\n         elif len(clauses) == 1:\n-            combined = clauses[0]\n+            pass\n         else:\n-            initial = \", \".join(clauses[:-1])\n             combined = f\"{initial} and {clauses[-1]}\"\n         return f\"You have {combined}.\"\n \n",
+        "repo": "Instagram__MonkeyType.70c3acf6"
+    }
+]

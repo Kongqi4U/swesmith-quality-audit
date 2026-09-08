@@ -1,0 +1,10 @@
+{
+ "source": "~/.claude/projects/<proj>/<session-id>/subagents/agent-<id>.jsonl",
+ "sandbox": "/root/workspace/swesmith-lab/sandboxes/s3-0mdq6eqw",
+ "n_tool_calls": 9,
+ "n_bash": 9,
+ "n_violations": 0,
+ "by_rule": {},
+ "verdict": "clean",
+ "violations": []
+}

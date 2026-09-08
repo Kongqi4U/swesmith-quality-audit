@@ -1,0 +1,38 @@
+# ---- 本地 lab 工作目录（绝不进仓库）----
+sandboxes/
+repos/
+venv/
+venv-*/
+.venv/
+SWE-smith/
+work/
+*.hidden.json          # 隐藏测试名单（results/ 下的历史产物除外，见下）
+!results/**/*.hidden.json
+
+# ---- 环境基线缓存：机器相关，第一次跑 eval_patch.py 自动重算 ----
+harness/.env_baseline*.json
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.tox/
+.coverage
+htmlcov/
+
+# ---- 机密 / 环境 ----
+.env
+.env.*
+*.pem
+*.key
+
+# ---- 编辑器 / 系统 ----
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# 注意：tasks/ 是主提示词目录，必须进仓库，不要在这里排除它。
+# 注意：results/ 下的 *.traj.jsonl 是已 scrub 的老师轨迹样本，故意提交。

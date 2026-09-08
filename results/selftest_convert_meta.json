@@ -1,0 +1,13 @@
+{
+ "source": "<agent-workdir>/<session-id>/tasks/<id>.output",
+ "tokenizer": "tiktoken:cl100k_base (⚠️ 非 Qwen 分词器，量级参考)",
+ "n_messages": 201,
+ "n_assistant_turns": 100,
+ "system_tokens": 853,
+ "user_tokens": 34236,
+ "assistant_tokens": 27521,
+ "thinking_tokens": 0,
+ "total_tokens_excl_thinking": 62610,
+ "loss_token_ratio": 0.4396,
+ "ratio_if_thinking_counted": 0.4396
+}
